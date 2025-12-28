@@ -10,17 +10,18 @@ import EmptySpace from "./pages/EmptySpace";
 import LinkDevices from "./pages/LinkDevices";
 import MainLayout from "./components/MainLayout";
 import Dashboard from "./pages/Dashboard";
-import { HomeProvider } from "./contexts/HomeContext";
+import { MockProvider } from "./contexts/MockContext";
 
 import Spaces from "./pages/Spaces";
 import Statistics from "./pages/Statistics";
 import Profile from "./pages/Profile";
 import Rooms from "./pages/Rooms";
 import RoomDetail from "./pages/RoomDetail";
+import DeviceDetail from "./pages/DeviceDetail";
 
 function App() {
   return (
-    <HomeProvider>
+    <MockProvider>
       <Router>
         <Routes>
           <Route path="/" element={<Landing />} />
@@ -38,13 +39,14 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/rooms" element={<Rooms />} />
             <Route path="/rooms/:id" element={<RoomDetail />} />
+            <Route path="/rooms/:roomId/device/:id" element={<DeviceDetail />} />
             <Route path="/empty-space" element={<EmptySpace />} />
             <Route path="/link-devices" element={<LinkDevices />} />
             {/* Placeholder routes for other sidebar items */}
           </Route>
         </Routes>
       </Router>
-    </HomeProvider>
+    </MockProvider>
   );
 }
 

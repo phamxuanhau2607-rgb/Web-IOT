@@ -1,201 +1,144 @@
-import React from 'react';
-import { Box, Typography, Paper, Grid, Avatar, AvatarGroup, Button } from '@mui/material';
-import { useHome } from '../contexts/HomeContext';
+import { useMockData } from '../contexts/MockContext';
+import { DEVICE_TYPES } from '../data/mockData';
 import { useNavigate } from 'react-router-dom';
-import EmptySpace from './EmptySpace';
 
-// Import Icons/Images
-import livingRoomImg from '../assets/icon/ChucNangWeb/Living room.png';
-import bedroomImg from '../assets/icon/ChucNangWeb/Bedroom.png';
-import kitchenImg from '../assets/icon/ChucNangWeb/Kitchen.png';
-import bathroomImg from '../assets/icon/ChucNangWeb/Bathroom.png';
-import smartLampImg from '../assets/icon/ChucNangWeb/Smart Lamp.png';
-import airConditionerImg from '../assets/icon/ChucNangWeb/Air Conditioner.png';
-import humidifierImg from '../assets/icon/ChucNangWeb/Humidifier icon.png';
-import speakerImg from '../assets/icon/ChucNangWeb/Speaker.png';
+// Icons using Lucide to match the design style
+import { Lightbulb, Mic2, Tv, Wind, Zap } from 'lucide-react';
+// Or we can import images if we had them. The user used CSSPicker images.
+// I'll stick to icons for stability unless I want to hotlink external images (risky).
+// Let's use simple logic to pick icons.
 
 const Dashboard = () => {
-    const { currentSpace } = useHome(); // Assuming Basic Context
+    const { currentSpace, toggleDevice } = useMockData();
     const navigate = useNavigate();
 
-    // Mock Data based on Assets
-    const rooms = [
-        { id: 1, name: 'Living Room', devices: 5, image: livingRoomImg },
-        { id: 2, name: 'Bedroom', devices: 3, image: bedroomImg },
-        { id: 3, name: 'Kitchen', devices: 4, image: kitchenImg },
-        { id: 4, name: 'Bathroom', devices: 2, image: bathroomImg },
-    ];
+    // Flatten devices
+    const allDevices = currentSpace.rooms.flatMap(room =>
+        room.devices.map(d => ({ ...d, roomId: room.id, roomName: room.name }))
+    );
 
-    const popularDevices = [
-        { id: 1, name: 'Smart Lamp', status: 'On', image: smartLampImg, color: '#FFD700' },
-        { id: 2, name: 'Air Conditioner', status: '24°C', image: airConditionerImg, color: '#4FD1C5' },
-        { id: 3, name: 'Humidifier', status: 'Off', image: humidifierImg, color: '#63B3ED' },
-        { id: 4, name: 'Speaker', status: 'Playing', image: speakerImg, color: '#F687B3' },
-    ];
-
-    if (!currentSpace) {
-        return <EmptySpace />;
-    }
+    // Dynamic Icon Strategy
+    const getDeviceIcon = (type) => {
+        switch (type) {
+            case DEVICE_TYPES.LIGHT: return <Lightbulb size={40} className="text-yellow-500" />;
+            case DEVICE_TYPES.FAN: return <Wind size={40} className="text-blue-400" />;
+            case DEVICE_TYPES.PLUG: return <Zap size={40} className="text-purple-500" />;
+            case DEVICE_TYPES.TV: return <Tv size={40} className="text-gray-500" />;
+            case DEVICE_TYPES.AC: return <Wind size={40} className="text-cyan-500" />;
+            default: return <Zap size={40} className="text-gray-400" />;
+        }
+    };
 
     return (
-        <Box sx={{ p: 3 }}>
-            {/* Header Section with Current Space Card */}
-            <Paper
-                elevation={0}
-                sx={{
-                    p: 4,
-                    borderRadius: 4,
-                    background: 'linear-gradient(135deg, #667EEA 0%, #764BA2 100%)',
-                    color: 'white',
-                    mb: 5,
-                    position: 'relative',
-                    overflow: 'hidden',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between'
-                }}
-            >
-                {/* Decorative Circles */}
-                <Box sx={{ position: 'absolute', top: -50, right: -50, width: 200, height: 200, borderRadius: '50%', bgcolor: 'rgba(255,255,255,0.1)' }} />
-                <Box sx={{ position: 'absolute', bottom: -30, left: 50, width: 100, height: 100, borderRadius: '50%', bgcolor: 'rgba(255,255,255,0.1)' }} />
+        <div>
+            {/* Top Banner (Header) */}
+            <header className="top-banner">
+                <div className="banner-header">
+                    <h1>Spaces</h1>
+                    <div className="home-selector">
+                        {/* Placeholder Home Image */}
+                        <div style={{ width: 24, height: 24, background: '#ccc', borderRadius: 4 }}></div>
+                        <span>{currentSpace.name}</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m6 9 6 6 6-6" /></svg>
+                    </div>
+                </div>
 
-                <Box sx={{ zIndex: 1 }}>
-                    <Typography variant="body2" sx={{ opacity: 0.8, textTransform: 'uppercase', letterSpacing: 1, mb: 1 }}>
-                        Current Space
-                    </Typography>
-                    <Typography variant="h3" fontWeight="bold" sx={{ mb: 1 }}>
-                        {currentSpace.name}
-                    </Typography>
-                    <Typography variant="h6" sx={{ opacity: 0.9, mb: 3 }}>
-                        {currentSpace.address}
-                    </Typography>
+                <div className="status-cards">
+                    <div className="status-card">
+                        <div className="status-icon weather">☀️</div>
+                        <div className="status-info">
+                            <span className="label">Weather</span>
+                            <span class="value">Sunny</span>
+                        </div>
+                    </div>
+                    <div className="status-card">
+                        <div className="status-icon humidity">💧</div>
+                        <div className="status-info">
+                            <span className="label">Humidity</span>
+                            <span className="value">45%</span>
+                        </div>
+                    </div>
+                    <div className="status-card highlight">
+                        <div className="status-icon bulb">💡</div>
+                        <div className="status-info">
+                            <span className="label">Active Devices</span>
+                            <span className="value">{allDevices.filter(d => d.isOn).length} On</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
 
-                    <Box sx={{ display: 'flex', gap: 4 }}>
-                        <Box>
-                            <Typography variant="h4" fontWeight="bold">{rooms.length}</Typography>
-                            <Typography variant="caption" sx={{ opacity: 0.8 }}>Rooms</Typography>
-                        </Box>
-                        <Box>
-                            <Typography variant="h4" fontWeight="bold">{popularDevices.length}</Typography>
-                            <Typography variant="caption" sx={{ opacity: 0.8 }}>Devices</Typography>
-                        </Box>
-                        <Box>
-                            <Typography variant="h4" fontWeight="bold">{currentSpace.members || 3}</Typography>
-                            <Typography variant="caption" sx={{ opacity: 0.8 }}>Members</Typography>
-                        </Box>
-                    </Box>
-                </Box>
+            {/* Devices Section */}
+            <section className="devices-section">
+                <div className="section-header">
+                    <h2>Your Devices <span className="count">{allDevices.length}</span></h2>
+                </div>
 
-                {/* Right Side: Members & Action */}
-                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2, zIndex: 1 }}>
-                    <AvatarGroup max={4} sx={{ '& .MuiAvatar-root': { width: 45, height: 45, border: '2px solid rgba(255,255,255,0.2)' } }}>
-                        <Avatar alt="Member 1" src="https://i.pravatar.cc/150?u=1" />
-                        <Avatar alt="Member 2" src="https://i.pravatar.cc/150?u=2" />
-                        <Avatar alt="Member 3" src="https://i.pravatar.cc/150?u=3" />
-                    </AvatarGroup>
-                    <Button
-                        variant="contained"
-                        sx={{
-                            bgcolor: 'rgba(255,255,255,0.2)',
-                            color: 'white',
-                            textTransform: 'none',
-                            backdropFilter: 'blur(10px)',
-                            '&:hover': { bgcolor: 'rgba(255,255,255,0.3)' }
-                        }}
-                        onClick={() => navigate('/spaces')}
-                    >
-                        Manage Space
-                    </Button>
-                </Box>
-            </Paper>
-
-            {/* Rooms Section */}
-            <Typography variant="h5" fontWeight="bold" sx={{ color: '#2D3748', mb: 3 }}>
-                Your Rooms
-            </Typography>
-            <Grid container spacing={3} sx={{ mb: 5 }}>
-                {rooms.map((room) => (
-                    <Grid item xs={12} sm={6} md={3} key={room.id}>
-                        <Paper
-                            elevation={0}
-                            sx={{
-                                p: 2,
-                                borderRadius: 3,
-                                height: '100%',
-                                cursor: 'pointer',
-                                transition: 'transform 0.3s, box-shadow 0.3s',
-                                '&:hover': { transform: 'translateY(-5px)', boxShadow: '0 10px 20px rgba(0,0,0,0.05)' },
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                textAlign: 'center'
+                <div className="devices-grid">
+                    {allDevices.map(device => (
+                        <div
+                            className="device-card"
+                            key={device.id}
+                            style={{ cursor: device.isReal ? 'pointer' : 'default' }}
+                            onClick={(e) => {
+                                // Navigate to details if it's the Real device and NOT clicking the switch
+                                if (device.isReal && !e.target.closest('.switch')) {
+                                    navigate(`/rooms/${device.roomId}/device/${device.id}`);
+                                }
                             }}
-                            onClick={() => navigate('/rooms')}
                         >
-                            <Box
-                                component="img"
-                                src={room.image}
-                                alt={room.name}
-                                sx={{ width: 80, height: 80, objectFit: 'contain', mb: 2 }}
-                            />
-                            <Typography variant="subtitle1" fontWeight="bold" sx={{ color: '#2D3748' }}>{room.name}</Typography>
-                            <Typography variant="caption" color="text.secondary">{room.devices} Devices</Typography>
-                        </Paper>
-                    </Grid>
-                ))}
-            </Grid>
+                            <div className="device-img-container">
+                                {getDeviceIcon(device.type)}
+                            </div>
+                            <div className="device-footer">
+                                <div className="device-meta">
+                                    <h3>{device.name.replace('(Relay)', '')}</h3>
+                                    <p>{device.roomName}</p>
+                                </div>
+                                <label className="switch" onClick={(e) => e.stopPropagation()}>
+                                    <input
+                                        type="checkbox"
+                                        checked={device.isOn}
+                                        onChange={() => toggleDevice(currentSpace.id, device.roomId, device.id)}
+                                        // Disable if not "Real" to enforce the "Only one active" rule visually 
+                                        // OR allow toggling internal state but user said "others dimmed". 
+                                        // The css opacity logic (dimming) should be applied if needed.
+                                        // User logic: "1 device active (Relay), others dimmed/disabled"
+                                        disabled={!device.isReal && device.isDimmed}
+                                    />
+                                    <span className="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </section>
 
-            {/* Popular Devices Section */}
-            <Typography variant="h5" fontWeight="bold" sx={{ color: '#2D3748', mb: 3 }}>
-                Popular Devices
-            </Typography>
-            <Grid container spacing={3}>
-                {popularDevices.map((device) => (
-                    <Grid item xs={12} sm={6} md={3} key={device.id}>
-                        <Paper
-                            elevation={0}
-                            sx={{
-                                p: 3,
-                                borderRadius: 3,
-                                height: '100%',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 2,
-                                cursor: 'pointer',
-                                transition: 'all 0.3s',
-                                '&:hover': { boxShadow: '0 5px 15px rgba(0,0,0,0.05)' }
-                            }}
-                            onClick={() => navigate('/devices')}
-                        >
-                            <Box
-                                sx={{
-                                    width: 60, height: 60,
-                                    borderRadius: 3,
-                                    bgcolor: `${device.color}20`, // Light opacity background
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center'
-                                }}
-                            >
-                                <Box component="img" src={device.image} alt={device.name} sx={{ width: 40, height: 40, objectFit: 'contain' }} />
-                            </Box>
-                            <Box>
-                                <Typography variant="subtitle1" fontWeight="bold" sx={{ color: '#2D3748' }}>{device.name}</Typography>
-                                <Typography
-                                    variant="caption"
-                                    fontWeight="bold"
-                                    sx={{
-                                        color: device.status === 'On' ? 'success.main' : device.status === 'Off' ? 'text.secondary' : 'primary.main',
-                                        bgcolor: device.status === 'On' ? '#E6FFFA' : device.status === 'Off' ? '#EDF2F7' : '#EBF8FF',
-                                        px: 1, py: 0.5, borderRadius: 1
-                                    }}
-                                >
-                                    {device.status}
-                                </Typography>
-                            </Box>
-                        </Paper>
-                    </Grid>
-                ))}
-            </Grid>
-        </Box>
+            {/* Bottom Row (Members & Map) - Keeping static as per design snippet */}
+            <div className="bottom-row">
+                <div className="members-card">
+                    <h3>Members</h3>
+                    <div className="avatar-group">
+                        {/* Static Avatars */}
+                        <div className="add-member">+</div>
+                    </div>
+                </div>
+                <div className="map-card">
+                    <div className="map-info">
+                        <h3>Your space map</h3>
+                        <p>See your rooms and all the devices that are related to them.</p>
+                    </div>
+                    <div className="map-graphic">
+                        {/* SVG Map Placehoder */}
+                        <svg width="80" height="60" viewBox="0 0 80 60">
+                            <rect x="5" y="5" width="40" height="30" fill="none" stroke="#fbbf24" strokeWidth="1" />
+                            <rect x="45" y="5" width="30" height="20" fill="none" stroke="#fbbf24" strokeWidth="1" />
+                            <rect x="45" y="25" width="30" height="30" fill="#fef3c7" stroke="#fbbf24" strokeWidth="1" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 };
 

@@ -1,114 +1,147 @@
-import React from 'react';
-import { Box, Typography, Paper, Grid } from '@mui/material';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { useHome } from '../contexts/HomeContext';
-import { Bolt, TrendingDown } from '@mui/icons-material';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useMockData } from '../contexts/MockContext';
+import { ArrowLeft, TrendingUp, TrendingDown } from 'lucide-react';
+// Recharts or similar is optional if I strictly follow the SVG path provided in HTML.
+// User provided an SVG path in HTML: <path d="M0,150 C100,150 ... " />
+// I will replicate this SVG structure but maybe make it dynamic if possible, 
+// OR just use the static SVG for now as "Chart Refactor" implies visual matching first.
+// However, the user DID mention: "Hiện tại đang fake số nhảy nhảy để demo" previously.
+// I should probably overlay the real data ON TOP of this design or use Recharts to mimic it?
+// The user said: "Statistics màn hình số liệu style cũng khá xấu, tôi sẽ gửi lại style sau khi ta sửa lại luồng chính" -> which is NOW.
+// User request: "Refactor Statistics to match provided HTML/CSS".
+// I will implement the HTML structure provided, essentially "Statics V2".
+
+// I will re-integrate the "Fluctuation" logic but formatted into the new "stats-header" / "summary-card" structure.
 
 const Statistics = () => {
-    const { statistics } = useHome();
+    const navigate = useNavigate();
+    const { currentSpace } = useMockData();
 
-    // Custom Tooltip
-    const CustomTooltip = ({ active, payload, label }) => {
-        if (active && payload && payload.length) {
-            return (
-                <Box sx={{ bgcolor: 'white', p: 1.5, border: '1px solid #E2E8F0', borderRadius: 2, boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
-                    <Typography variant="caption" sx={{ color: '#718096', fontWeight: 600 }}>{label}</Typography>
-                    <Typography variant="body2" sx={{ color: '#4FD1C5', fontWeight: 'bold' }}>
-                        {payload[0].value} KW
-                    </Typography>
-                </Box>
-            );
-        }
-        return null;
-    };
+    // Simulation Data
+    const [powerUsage, setPowerUsage] = useState(50);
+    const [voltage, setVoltage] = useState(220);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setPowerUsage(prev => {
+                const change = (Math.random() - 0.5) * 5;
+                return parseFloat((prev + change).toFixed(1));
+            });
+            setVoltage(prev => {
+                const change = (Math.random() - 0.5) * 2;
+                return parseFloat((220 + change).toFixed(1));
+            });
+        }, 2000);
+        return () => clearInterval(interval);
+    }, []);
 
     return (
-        <Box>
-            <Typography variant="h5" fontWeight="bold" sx={{ color: '#2D3748', mb: 4 }}>
-                Energy Statistics
-            </Typography>
+        <div>
+            {/* Stats Container (Dark Block) */}
+            <div className="stats-container">
+                <div className="stats-header">
+                    <div className="title-group">
+                        <button className="back-btn" onClick={() => navigate(-1)}>
+                            <ArrowLeft size={20} />
+                        </button>
+                        <div>
+                            <p className="subtitle">Statistics</p>
+                            <h2>Electricity Usage</h2>
+                        </div>
+                    </div>
+                    <div className="time-filters">
+                        <button>Today</button>
+                        <button className="active">Week</button>
+                        <button>Month</button>
+                        <button>Year</button>
+                        <button>Quarter</button>
+                    </div>
+                </div>
 
-            <Grid container spacing={4}>
-                {/* Chart Section */}
-                <Grid item xs={12} md={8}>
-                    <Paper sx={{ p: 3, borderRadius: 4, height: 400 }}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 4 }}>
-                            <Typography variant="h6" fontWeight="bold" sx={{ color: '#2D3748' }}>
-                                Usage This Week
-                            </Typography>
-                            <Typography variant="body2" sx={{ color: '#A0AEC0' }}>
-                                KW / Day
-                            </Typography>
-                        </Box>
+                <div className="chart-section">
+                    <div className="chart-main">
+                        <div className="y-axis">
+                            <span>20 kW</span>
+                            <span>15 kW</span>
+                            <span>10 kW</span>
+                            <span>5 kW</span>
+                            <span>0 kW</span>
+                        </div>
+                        <div className="chart-area">
+                            <div className="grid-lines">
+                                <div className="line"></div>
+                                <div className="line"></div>
+                                <div className="line"></div>
+                                <div className="line"></div>
+                                <div className="line"></div>
+                            </div>
+                            {/* Static SVG for design match, can be made dynamic later with Recharts */}
+                            <svg className="usage-line" viewBox="0 0 800 200" preserveAspectRatio="none">
+                                <path d="M0,150 C100,150 150,80 200,100 C250,120 300,130 350,110 C400,90 450,20 500,30 C550,40 600,120 650,110 C700,100 750,130 800,150" fill="none" stroke="#3b82f6" strokeWidth="3" />
+                                <circle cx="500" cy="30" r="6" fill="#3b82f6" stroke="white" strokeWidth="2" />
+                            </svg>
+                            <div className="tooltip" style={{ left: '60%', top: '-10px' }}>{powerUsage} kW</div>
+                            <div className="active-column" style={{ left: '60%' }}></div>
+                        </div>
+                        <div className="x-axis">
+                            <span>M</span>
+                            <span>T</span>
+                            <span>W</span>
+                            <span className="active">T</span>
+                            <span>F</span>
+                            <span>S</span>
+                            <span>S</span>
+                        </div>
+                    </div>
 
-                        <ResponsiveContainer width="100%" height="80%">
-                            <BarChart data={statistics.weeklyUsage} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
-                                <XAxis
-                                    dataKey="day"
-                                    axisLine={false}
-                                    tickLine={false}
-                                    tick={{ fill: '#A0AEC0', fontSize: 12 }}
-                                    dy={10}
-                                />
-                                <YAxis
-                                    axisLine={false}
-                                    tickLine={false}
-                                    tick={{ fill: '#A0AEC0', fontSize: 12 }}
-                                />
-                                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'transparent' }} />
-                                <Bar dataKey="kw" radius={[6, 6, 6, 6]} barSize={40}>
-                                    {statistics.weeklyUsage.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={index === 5 ? '#4FD1C5' : '#CBD5E0'} />
-                                    ))}
-                                </Bar>
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </Paper>
-                </Grid>
+                    <div className="stats-sidebar">
+                        <div className="summary-card">
+                            <p>This Week</p>
+                            <h3>{powerUsage} kW</h3>
+                            <span className="trend up">
+                                <TrendingUp size={12} />
+                                +7.45%
+                            </span>
+                        </div>
+                        <div className="summary-card">
+                            <p>Voltage Stability</p>
+                            <h3>{voltage} V</h3>
+                            <span className="trend down">
+                                <TrendingDown size={12} />
+                                -0.5%
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                {/* Summary Cards */}
-                <Grid item xs={12} md={4}>
-                    <Paper
-                        sx={{
-                            p: 3,
-                            borderRadius: 4,
-                            bgcolor: '#319795',
-                            color: 'white',
-                            mb: 3,
-                            position: 'relative',
-                            overflow: 'hidden'
-                        }}
-                    >
-                        <Box sx={{ position: 'absolute', top: -10, right: -10, width: 80, height: 80, borderRadius: '50%', bgcolor: 'rgba(255,255,255,0.1)' }} />
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                            <Box>
-                                <Typography variant="h3" fontWeight="bold">{statistics.totalLoss}</Typography>
-                                <Typography variant="body2" sx={{ opacity: 0.8 }}>Total Loss (KW)</Typography>
-                            </Box>
-                            <Box sx={{ p: 1, bgcolor: 'rgba(255,255,255,0.2)', borderRadius: 2 }}>
-                                <Bolt />
-                            </Box>
-                        </Box>
-                    </Paper>
-
-                    <Paper sx={{ p: 3, borderRadius: 4 }}>
-                        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', mb: 2 }}>
-                            <Box sx={{ p: 1, bgcolor: '#FFF5F5', borderRadius: '50%', color: '#E53E3E' }}>
-                                <TrendingDown />
-                            </Box>
-                            <Box>
-                                <Typography variant="subtitle2" fontWeight="bold" sx={{ color: '#2D3748' }}>Down 12%</Typography>
-                                <Typography variant="caption" sx={{ color: '#A0AEC0' }}>compared to last week</Typography>
-                            </Box>
-                        </Box>
-                        <Typography variant="body2" sx={{ color: '#4A5568' }}>
-                            Great job! You are using less energy than usual. Consider checking your AC scheduling to save even more.
-                        </Typography>
-                    </Paper>
-                </Grid>
-            </Grid>
-        </Box>
+            {/* Rooms Section inside Statistics */}
+            <section className="rooms-section">
+                <div className="section-header">
+                    <h2>Your Rooms <span className="count">{currentSpace.rooms.length}</span></h2>
+                </div>
+                <div className="rooms-grid">
+                    {currentSpace.rooms.map(room => (
+                        <div className="room-card" key={room.id} onClick={() => navigate(`/rooms/${room.id}`)} style={{ cursor: 'pointer' }}>
+                            <div className="room-img">
+                                {/* Using room image from mock or placeholder if missing */}
+                                <img src={room.image || `https://csspicker.dev/api/image/?q=${room.name}&image_type=photo`} alt={room.name} />
+                            </div>
+                            <div className="room-info">
+                                <div className="room-meta">
+                                    <h4>{room.name}</h4>
+                                    <span className="device-count">
+                                        <span className="dot"></span> {room.devices.length} devices
+                                    </span>
+                                </div>
+                                <div className="room-usage">{(Math.random() * 10 + 5).toFixed(1)} kW</div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </section>
+        </div>
     );
 };
 

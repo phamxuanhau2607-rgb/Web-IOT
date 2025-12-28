@@ -1,97 +1,157 @@
 import React, { useState } from 'react';
-import { Box, Typography, Paper, Grid, Avatar, Button, Switch, Divider, List, ListItem, ListItemText, ListItemSecondaryAction, TextField } from '@mui/material';
-import { useHome } from '../contexts/HomeContext';
-import { useNavigate } from 'react-router-dom';
-import { Logout } from '@mui/icons-material';
+import { useMockData } from '../contexts/MockContext';
+import { Bell, Key, Settings, User } from 'lucide-react';
 
 const Profile = () => {
-    const { user } = useHome();
-    const navigate = useNavigate();
-    const [notifications, setNotifications] = useState(true);
-    const [darkMode, setDarkMode] = useState(false);
+    const { user } = useMockData();
+    const [activeTab, setActiveTab] = useState('Account');
 
-    const handleLogout = () => {
-        // Implement logout logic here (clear tokens etc)
-        navigate('/login');
+    const renderTabContent = () => {
+        switch (activeTab) {
+            case 'Account':
+                return (
+                    <div className="profile-form-container">
+                        <div className="profile-picture-section">
+                            <div className="avatar-large-wrapper">
+                                <img src={user.avatar || "https://csspicker.dev/api/image/?q=woman+portrait&image_type=photo"} alt="Kristin Jones" className="avatar-large" />
+                                <div className="edit-badge">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0084ff" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <form className="profile-form">
+                            <div className="form-group">
+                                <label>Full Name</label>
+                                <input type="text" defaultValue={user.name} placeholder="Enter your name" />
+                            </div>
+
+                            <div className="form-group">
+                                <label>Phone</label>
+                                <div className="phone-input-wrapper">
+                                    <div className="country-select">
+                                        <img src="https://upload.wikimedia.org/wikipedia/en/b/ba/Flag_of_Germany.svg" alt="DE" className="flag-icon" />
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                    </div>
+                                    <input type="tel" defaultValue="+49 30 901820" />
+                                </div>
+                            </div>
+
+                            <div className="form-group">
+                                <label>Email</label>
+                                <input type="email" defaultValue={user.email} placeholder="Enter your email" />
+                            </div>
+                        </form>
+
+                        <footer className="form-footer">
+                            <span className="footer-hint">Edit your account information</span>
+                            <button className="btn-save">Save updates</button>
+                        </footer>
+                    </div>
+                );
+            case 'Change Password':
+                return (
+                    <div className="profile-form-container">
+                        <form className="profile-form">
+                            <div className="form-group">
+                                <label>Current Password</label>
+                                <input type="password" placeholder="••••••••" />
+                            </div>
+                            <div className="form-group">
+                                <label>New Password</label>
+                                <input type="password" placeholder="Enter new password" />
+                            </div>
+                            <div className="form-group">
+                                <label>Confirm New Password</label>
+                                <input type="password" placeholder="Confirm new password" />
+                            </div>
+                        </form>
+                        <footer className="form-footer">
+                            <span className="footer-hint">Make sure it's secure</span>
+                            <button className="btn-save">Update Password</button>
+                        </footer>
+                    </div>
+                );
+            case 'Notifications':
+                return (
+                    <div className="profile-form-container">
+                        <div className="profile-form">
+                            <div className="form-group" style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                                <div>
+                                    <label style={{ fontSize: '14px', color: '#333' }}>Email Notifications</label>
+                                    <p style={{ fontSize: '12px', color: '#8e9aaf' }}>Receive updates via email</p>
+                                </div>
+                                <label className="switch">
+                                    <input type="checkbox" defaultChecked />
+                                    <span className="slider"></span>
+                                </label>
+                            </div>
+                            <div className="form-group" style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                                <div>
+                                    <label style={{ fontSize: '14px', color: '#333' }}>Push Notifications</label>
+                                    <p style={{ fontSize: '12px', color: '#8e9aaf' }}>Receive updates on your device</p>
+                                </div>
+                                <label className="switch">
+                                    <input type="checkbox" defaultChecked />
+                                    <span className="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                );
+            case 'Preferences':
+                return (
+                    <div className="profile-form-container">
+                        <form className="profile-form">
+                            <div className="form-group">
+                                <label>Language</label>
+                                <select style={{ padding: '14px 16px', border: '1px solid var(--border-color)', borderRadius: '10px', width: '100%', outline: 'none' }}>
+                                    <option>English (US)</option>
+                                    <option>Vietnamese</option>
+                                    <option>German</option>
+                                </select>
+                            </div>
+                            <div className="form-group">
+                                <label>Time Zone</label>
+                                <select style={{ padding: '14px 16px', border: '1px solid var(--border-color)', borderRadius: '10px', width: '100%', outline: 'none' }}>
+                                    <option>UTC+07:00 (Bangkok, Hanoi, Jakarta)</option>
+                                    <option>UTC+00:00 (London)</option>
+                                </select>
+                            </div>
+                        </form>
+                        <footer className="form-footer">
+                            <span className="footer-hint">Customize your experience</span>
+                            <button className="btn-save">Save Preferences</button>
+                        </footer>
+                    </div>
+                );
+            default:
+                return null;
+        }
     };
 
     return (
-        <Box maxWidth="md">
-            <Typography variant="h5" fontWeight="bold" sx={{ color: '#2D3748', mb: 4 }}>
-                Profile Settings
-            </Typography>
+        <div>
+            <header className="content-header">
+                <h1>Profile</h1>
+            </header>
 
-            <Grid container spacing={4}>
-                {/* Account Info */}
-                <Grid item xs={12} md={4}>
-                    <Paper sx={{ p: 4, borderRadius: 4, textAlign: 'center' }}>
-                        <Avatar
-                            src={user.avatar}
-                            sx={{ width: 100, height: 100, margin: '0 auto', mb: 2, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-                        />
-                        <Typography variant="h6" fontWeight="bold" sx={{ color: '#2D3748' }}>{user.name}</Typography>
-                        <Typography variant="body2" sx={{ color: '#A0AEC0', mb: 3 }}>{user.email}</Typography>
-
-                        <Button
-                            variant="outlined"
-                            color="error"
-                            startIcon={<Logout />}
-                            fullWidth
-                            onClick={handleLogout}
-                            sx={{ borderRadius: 2, textTransform: 'none' }}
+            <div className="tabs-container">
+                <div className="tabs">
+                    {['Account', 'Change Password', 'Notifications', 'Preferences'].map(tab => (
+                        <button
+                            key={tab}
+                            className={`tab ${activeTab === tab ? 'active' : ''}`}
+                            onClick={() => setActiveTab(tab)}
                         >
-                            Log Out
-                        </Button>
-                    </Paper>
-                </Grid>
+                            {tab === 'Account' ? 'Account information' : tab}
+                        </button>
+                    ))}
+                </div>
+            </div>
 
-                {/* Settings Forms */}
-                <Grid item xs={12} md={8}>
-                    <Paper sx={{ p: 4, borderRadius: 4, mb: 4 }}>
-                        <Typography variant="h6" fontWeight="bold" sx={{ mb: 3, color: '#2D3748' }}>
-                            Account Information
-                        </Typography>
-                        <Grid container spacing={3}>
-                            <Grid item xs={12} sm={6}>
-                                <TextField fullWidth label="Full Name" defaultValue={user.name} variant="outlined" />
-                            </Grid>
-                            <Grid item xs={12} sm={6}>
-                                <TextField fullWidth label="Email" defaultValue={user.email} variant="outlined" />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField fullWidth label="Address" defaultValue="123 Smart Street, Tech City" variant="outlined" />
-                            </Grid>
-                        </Grid>
-                        <Box sx={{ mt: 3, textAlign: 'right' }}>
-                            <Button variant="contained" sx={{ bgcolor: '#4FD1C5', '&:hover': { bgcolor: '#319795' }, textTransform: 'none', borderRadius: 2 }}>
-                                Save Changes
-                            </Button>
-                        </Box>
-                    </Paper>
-
-                    <Paper sx={{ p: 4, borderRadius: 4 }}>
-                        <Typography variant="h6" fontWeight="bold" sx={{ mb: 2, color: '#2D3748' }}>
-                            Preferences
-                        </Typography>
-                        <List>
-                            <ListItem disableGutters>
-                                <ListItemText primary="Push Notifications" secondary="Receive alerts about your home" />
-                                <ListItemSecondaryAction>
-                                    <Switch checked={notifications} onChange={() => setNotifications(!notifications)} color="primary" />
-                                </ListItemSecondaryAction>
-                            </ListItem>
-                            <Divider component="li" />
-                            <ListItem disableGutters>
-                                <ListItemText primary="Dark Mode" secondary="Switch between light and dark themes" />
-                                <ListItemSecondaryAction>
-                                    <Switch checked={darkMode} onChange={() => setDarkMode(!darkMode)} color="primary" />
-                                </ListItemSecondaryAction>
-                            </ListItem>
-                        </List>
-                    </Paper>
-                </Grid>
-            </Grid>
-        </Box>
+            {renderTabContent()}
+        </div>
     );
 };
 

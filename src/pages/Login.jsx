@@ -26,7 +26,7 @@ const Login = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (formData.email && formData.password) {
-            navigate('/verify-code');
+            navigate('/dashboard');
         }
     };
 

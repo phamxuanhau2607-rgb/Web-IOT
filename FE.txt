@@ -1,0 +1,4310 @@
+eslint.config.js
+===
+import js from '@eslint/js'
+import globals from 'globals'
+import reactHooks from 'eslint-plugin-react-hooks'
+import reactRefresh from 'eslint-plugin-react-refresh'
+import { defineConfig, globalIgnores } from 'eslint/config'
+
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{js,jsx}'],
+    extends: [
+      js.configs.recommended,
+      reactHooks.configs.flat.recommended,
+      reactRefresh.configs.vite,
+    ],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: globals.browser,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        ecmaFeatures: { jsx: true },
+        sourceType: 'module',
+      },
+    },
+    rules: {
+      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+    },
+  },
+])
+
+===
+
+index.html
+===
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>frontend</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
+
+===
+
+package.json
+===
+{
+  "name": "frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^7.3.5",
+    "@mui/material": "^7.3.5",
+    "@tailwindcss/postcss": "^4.1.18",
+    "axios": "^1.13.2",
+    "lucide-react": "^0.562.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-icons": "^5.5.0",
+    "react-router-dom": "^7.11.0",
+    "recharts": "^3.6.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "@vitejs/plugin-react": "^5.1.0",
+    "autoprefixer": "^10.4.23",
+    "eslint": "^9.39.1",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.24",
+    "globals": "^16.5.0",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.18",
+    "vite": "^7.2.2"
+  }
+}
+
+===
+
+postcss.config.js
+===
+export default {
+    plugins: {
+        "@tailwindcss/postcss": {},
+        autoprefixer: {},
+    },
+}
+
+===
+
+src/App.css
+===
+.App {
+font-family: 'Segoe UI', sans-serif;
+padding: 2rem;
+max-width: 700px;
+margin: auto;
+background-color: #fdfdfd;
+}
+h1 {
+text-align: center;
+color: #008080;
+}
+.device-section,
+.form-section,
+.control-section {
+margin-top: 2rem;
+}
+.device-list {
+list-style: none;
+padding: 0;
+}
+.device-item {
+display: flex;
+align-items: center;
+justify-content: space-between;
+background: #eef;
+margin-bottom: 0.5rem;
+padding: 0.5rem 1rem;
+border-radius: 8px;
+}
+.device-item code {
+font-size: 0.9em;
+color: #555;
+}
+input {
+margin: 0.3rem 0.5rem 0.3rem 0;
+padding: 0.5rem;
+border-radius: 5px;
+border: 1px solid #ccc;
+width: calc(100% - 20px);
+}
+button {
+padding: 0.5rem 1rem;
+border: none;
+background-color: #008080;
+color: white;
+border-radius: 5px;
+cursor: pointer;
+margin-top: 0.5rem;
+}
+button:hover {
+background-color: #006666;
+}
+===
+
+src/App.jsx
+===
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Landing from "./pages/Landing";
+import Login from "./pages/Login";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import VerifyCode from "./pages/VerifyCode";
+import Hello from "./pages/Hello";
+import EmptySpace from "./pages/EmptySpace";
+import LinkDevices from "./pages/LinkDevices";
+import MainLayout from "./components/MainLayout";
+import Dashboard from "./pages/Dashboard";
+import { HomeProvider } from "./contexts/HomeContext";
+
+import Spaces from "./pages/Spaces";
+import Statistics from "./pages/Statistics";
+import Profile from "./pages/Profile";
+import Rooms from "./pages/Rooms";
+import RoomDetail from "./pages/RoomDetail";
+
+function App() {
+  return (
+    <HomeProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/verify-code" element={<VerifyCode />} />
+          <Route path="/hello" element={<Hello />} />
+
+          {/* Main Application Layout */}
+          <Route element={<MainLayout />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/spaces" element={<Spaces />} />
+            <Route path="/statistics" element={<Statistics />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/rooms" element={<Rooms />} />
+            <Route path="/rooms/:id" element={<RoomDetail />} />
+            <Route path="/empty-space" element={<EmptySpace />} />
+            <Route path="/link-devices" element={<LinkDevices />} />
+            {/* Placeholder routes for other sidebar items */}
+          </Route>
+        </Routes>
+      </Router>
+    </HomeProvider>
+  );
+}
+
+export default App;
+
+===
+
+src/components/AuthLayout.jsx
+===
+import React from "react";
+import { Grid, Box, Typography } from "@mui/material";
+
+const AuthLayout = ({ illustration, children, title, subtitle }) => {
+    return (
+        <Box sx={{ minHeight: "100vh", bgcolor: "#fff" }}>
+            <Grid container sx={{ minHeight: "100vh" }}>
+                {/* Left Column: Illustration (40%) */}
+                {/* User requested 40% width. Grid system: 12 columns. 40% is approx 5/12 (41.6%) */}
+                <Grid
+                    item
+                    xs={12}
+                    md={5}
+                    sx={{
+                        bgcolor: "#F4F7FA",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        position: "relative",
+                        p: 4
+                    }}
+                >
+                    {illustration && (
+                        <Box sx={{ width: "100%", maxWidth: 400, mb: 4 }}>
+                            <img
+                                src={illustration}
+                                alt="Illustration"
+                                style={{ width: "100%", height: "auto", display: "block" }}
+                            />
+                        </Box>
+                    )}
+                    {title && (
+                        <Typography variant="h4" fontWeight="bold" sx={{ color: "#2D3748", mb: 2, textAlign: "center" }}>
+                            {title}
+                        </Typography>
+                    )}
+                    {subtitle && (
+                        <Typography variant="body1" sx={{ color: "#718096", textAlign: "center", maxWidth: 300 }}>
+                            {subtitle}
+                        </Typography>
+                    )}
+                </Grid>
+
+                {/* Right Column: Form (60%) */}
+                <Grid
+                    item
+                    xs={12}
+                    md={7}
+                    sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        p: 4
+                    }}
+                >
+                    <Box sx={{ width: "100%", maxWidth: 450 }}>
+                        {children}
+                    </Box>
+                </Grid>
+            </Grid>
+        </Box>
+    );
+};
+
+export default AuthLayout;
+
+===
+
+src/components/DeviceCard.jsx
+===
+import React from "react";
+import { Box, Typography, IconButton } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+
+const DeviceCard = ({ icon, image, name, status, isConnected }) => {
+  return (
+    <Box
+      sx={{
+        bgcolor: "#fff",
+        borderRadius: "20px",
+        p: 3,
+        boxShadow: "0 2px 10px rgba(0,0,0,0.03)",
+        border: "1px solid transparent",
+        cursor: "pointer",
+        transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "&:hover": {
+          borderColor: "#007BFF",
+          boxShadow: "0 8px 20px rgba(0, 123, 255, 0.1)",
+          transform: "translateY(-4px)"
+        },
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-start",
+        position: "relative",
+        minHeight: 170
+      }}
+    >
+      {/* Icon Circle */}
+      <Box sx={{
+        width: 50, height: 50, borderRadius: "16px", bgcolor: isConnected ? "#E6FFFA" : "#F7FAFC",
+        display: "flex", alignItems: "center", justifyContent: "center", mb: 2,
+        color: isConnected ? "#38A169" : "#718096",
+        overflow: 'hidden'
+      }}>
+        {image ? (
+          <img src={image} alt={name} style={{ width: '80%', height: '80%', objectFit: 'contain' }} />
+        ) : (
+          icon
+        )}
+      </Box>
+
+      {/* Text Info */}
+      <Typography variant="subtitle1" fontWeight="bold" sx={{ color: "#2D3748", mb: 0.5, fontSize: "1rem" }}>
+        {name}
+      </Typography>
+      <Typography variant="caption" sx={{ color: isConnected ? "#38A169" : "#A0AEC0", fontWeight: 600 }}>
+        {isConnected ? "Connected" : status || "Not Connected"}
+      </Typography>
+
+      {/* Add / Remove Button */}
+      <IconButton
+        sx={{
+          position: "absolute",
+          bottom: 12,
+          right: 12,
+          bgcolor: isConnected ? "#FFEBF0" : "#F0F7FF",
+          color: isConnected ? "#E53E3E" : "#007BFF",
+          width: 36, height: 36,
+          borderRadius: "12px",
+          "&:hover": {
+            bgcolor: isConnected ? "#FED7E2" : "#EBF8FF"
+          }
+        }}
+      >
+        {isConnected ? <DeleteOutlineIcon fontSize="small" /> : <AddIcon fontSize="small" />}
+      </IconButton>
+    </Box>
+  );
+};
+
+export default DeviceCard;
+
+===
+
+src/components/MainLayout.jsx
+===
+import React from 'react';
+import { Box, Drawer, List, ListItem, ListItemIcon, ListItemText, Avatar, Typography, IconButton, InputBase, Badge } from '@mui/material';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { Home as HomeIcon, Devices as DevicesIcon, Settings as SettingsIcon, Dashboard as DashboardIcon, BarChart as BarChartIcon, Search as SearchIcon, Notifications as NotificationsIcon } from '@mui/icons-material';
+import { useHome } from '../contexts/HomeContext';
+
+const DRAWER_WIDTH = 260;
+
+const SidebarItem = ({ icon, label, path, active, onClick }) => (
+    <ListItem
+        button
+        onClick={onClick}
+        sx={{
+            my: 0.5,
+            mx: 2,
+            borderRadius: 3,
+            backgroundColor: active ? '#4FD1C5' : 'transparent',
+            color: active ? '#fff' : '#A0AEC0',
+            '&:hover': {
+                backgroundColor: active ? '#4FD1C5' : 'rgba(0, 0, 0, 0.04)',
+            },
+            transition: 'all 0.2s ease-in-out',
+        }}
+    >
+        <ListItemIcon sx={{ color: active ? '#fff' : '#A0AEC0', minWidth: 40 }}>
+            {icon}
+        </ListItemIcon>
+        <ListItemText
+            primary={label}
+            primaryTypographyProps={{
+                fontWeight: active ? 600 : 500,
+                fontSize: '0.95rem'
+            }}
+        />
+    </ListItem>
+);
+
+const MainLayout = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
+    const { user } = useHome();
+
+    const menuItems = [
+        { label: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
+        { label: 'Spaces', icon: <HomeIcon />, path: '/spaces' }, // TBD
+        { label: 'Devices', icon: <DevicesIcon />, path: '/link-devices' },
+        { label: 'Statistics', icon: <BarChartIcon />, path: '/statistics' },
+        { label: 'Profile', icon: <SettingsIcon />, path: '/profile' },
+    ];
+
+    return (
+        <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#F7FAFC' }}>
+            {/* Sidebar */}
+            <Drawer
+                variant="permanent"
+                sx={{
+                    width: DRAWER_WIDTH,
+                    flexShrink: 0,
+                    '& .MuiDrawer-paper': {
+                        width: DRAWER_WIDTH,
+                        boxSizing: 'border-box',
+                        borderRight: 'none',
+                        bgcolor: '#FFFFFF',
+                        boxShadow: '4px 0 24px rgba(0,0,0,0.02)'
+                    },
+                }}
+            >
+                <Box sx={{ p: 4, display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Box sx={{ width: 40, height: 40, bgcolor: '#4FD1C5', borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        {/* Logo Placeholder */}
+                        <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>H</Typography>
+                    </Box>
+                    <Typography variant="h6" fontWeight="bold" sx={{ color: '#2D3748' }}>
+                        Smart Home
+                    </Typography>
+                </Box>
+
+                <List sx={{ px: 0 }}>
+                    {menuItems.map((item) => (
+                        <SidebarItem
+                            key={item.label}
+                            {...item}
+                            active={location.pathname === item.path}
+                            onClick={() => navigate(item.path)}
+                        />
+                    ))}
+                </List>
+
+                <Box sx={{ mt: 'auto', p: 4 }}>
+                    <Box sx={{
+                        p: 2,
+                        borderRadius: 3,
+                        bgcolor: '#F7FAFC',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 2
+                    }}>
+                        <Avatar src={user?.avatar} alt={user?.name} sx={{ width: 40, height: 40 }} />
+                        <Box>
+                            <Typography variant="subtitle2" fontWeight="bold" sx={{ color: '#2D3748' }}>
+                                {user?.name}
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: '#A0AEC0' }}>
+                                {user?.email}
+                            </Typography>
+                        </Box>
+                    </Box>
+                </Box>
+            </Drawer>
+
+            {/* Main Content Area */}
+            <Box component="main" sx={{ flexGrow: 1, p: 4, width: `calc(100% - ${DRAWER_WIDTH}px)` }}>
+                {/* Topbar */}
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+                    <Box>
+                        <Typography variant="h4" fontWeight="bold" sx={{ color: '#2D3748', mb: 1 }}>
+                            {menuItems.find(item => item.path === location.pathname)?.label || 'Overview'}
+                        </Typography>
+                        <Typography variant="body1" sx={{ color: '#A0AEC0' }}>
+                            Welcome back, {user?.name}!
+                        </Typography>
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Box sx={{
+                            bgcolor: '#fff',
+                            borderRadius: 3,
+                            p: '8px 16px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
+                            width: 300
+                        }}>
+                            <SearchIcon sx={{ color: '#A0AEC0', mr: 1 }} />
+                            <InputBase placeholder="Search..." fullWidth sx={{ fontSize: '0.95rem' }} />
+                        </Box>
+
+                        <IconButton sx={{ bgcolor: '#fff', p: 1.5, borderRadius: 3, boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
+                            <Badge variant="dot" color="error">
+                                <NotificationsIcon sx={{ color: '#A0AEC0' }} />
+                            </Badge>
+                        </IconButton>
+                    </Box>
+                </Box>
+
+                {/* Page Content */}
+                <Outlet />
+            </Box>
+        </Box>
+    );
+};
+
+export default MainLayout;
+
+===
+
+src/components/ui/Button.jsx
+===
+import React from 'react';
+import PropTypes from 'prop-types';
+
+/**
+ * Reusable Button Component
+ * Supports multiple variants, sizes, and states
+ */
+const Button = ({
+    children,
+    variant = 'primary',
+    size = 'base',
+    type = 'button',
+    disabled = false,
+    loading = false,
+    fullWidth = false,
+    icon = null,
+    iconPosition = 'left',
+    onClick,
+    className = '',
+    ...props
+}) => {
+    // Variant styles
+    const variantStyles = {
+        primary: 'bg-primary-main text-white hover:bg-primary-dark active:bg-primary-700 shadow-sm',
+        secondary: 'bg-secondary-main text-white hover:bg-secondary-dark active:bg-secondary-dark shadow-sm',
+        outline: 'bg-transparent border-2 border-primary-main text-primary-main hover:bg-primary-50 active:bg-primary-100',
+        ghost: 'bg-transparent text-primary-main hover:bg-primary-50 active:bg-primary-100',
+        danger: 'bg-accent-red text-white hover:bg-red-600 active:bg-red-700 shadow-sm',
+        success: 'bg-accent-green text-white hover:bg-green-600 active:bg-green-700 shadow-sm',
+    };
+
+    // Size styles
+    const sizeStyles = {
+        sm: 'h-9 px-3 text-sm',
+        base: 'h-11 px-5 text-base',
+        lg: 'h-13 px-6 text-lg',
+    };
+
+    // Combined classes
+    const baseClasses = 'inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-all duration-base focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+
+    const widthClass = fullWidth ? 'w-full' : '';
+
+    const combinedClassName = `${baseClasses} ${variantStyles[variant]} ${sizeStyles[size]} ${widthClass} ${className}`;
+
+    return (
+        <button
+            type={type}
+            disabled={disabled || loading}
+            onClick={onClick}
+            className={combinedClassName}
+            {...props}
+        >
+            {loading && (
+                <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            )}
+            {!loading && icon && iconPosition === 'left' && <span>{icon}</span>}
+            {children}
+            {!loading && icon && iconPosition === 'right' && <span>{icon}</span>}
+        </button>
+    );
+};
+
+Button.propTypes = {
+    children: PropTypes.node.isRequired,
+    variant: PropTypes.oneOf(['primary', 'secondary', 'outline', 'ghost', 'danger', 'success']),
+    size: PropTypes.oneOf(['sm', 'base', 'lg']),
+    type: PropTypes.oneOf(['button', 'submit', 'reset']),
+    disabled: PropTypes.bool,
+    loading: PropTypes.bool,
+    fullWidth: PropTypes.bool,
+    icon: PropTypes.node,
+    iconPosition: PropTypes.oneOf(['left', 'right']),
+    onClick: PropTypes.func,
+    className: PropTypes.string,
+};
+
+export default Button;
+
+===
+
+src/components/ui/index.js
+===
+// UI Components Barrel Export
+export { default as Button } from './Button';
+export { default as Input } from './Input';
+export { default as OTPInput } from './OTPInput';
+
+===
+
+src/components/ui/Input.jsx
+===
+import React, { forwardRef } from 'react';
+import PropTypes from 'prop-types';
+
+/**
+ * Reusable Input Component
+ * Supports text, password, email, and other input types
+ */
+const Input = forwardRef(({
+    type = 'text',
+    label,
+    placeholder,
+    value,
+    onChange,
+    onBlur,
+    name,
+    id,
+    error,
+    helperText,
+    disabled = false,
+    required = false,
+    icon,
+    iconPosition = 'left',
+    className = '',
+    ...props
+}, ref) => {
+    const inputId = id || name;
+
+    return (
+        <div className={`w-full ${className}`}>
+            {label && (
+                <label
+                    htmlFor={inputId}
+                    className="block text-sm font-medium text-text-primary mb-2"
+                >
+                    {label}
+                    {required && <span className="text-accent-red ml-1">*</span>}
+                </label>
+            )}
+
+            <div className="relative">
+                {icon && iconPosition === 'left' && (
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500">
+                        {icon}
+                    </div>
+                )}
+
+                <input
+                    ref={ref}
+                    type={type}
+                    id={inputId}
+                    name={name}
+                    value={value}
+                    onChange={onChange}
+                    onBlur={onBlur}
+                    placeholder={placeholder}
+                    disabled={disabled}
+                    required={required}
+                    className={`
+            w-full h-11 px-4 rounded-lg border transition-all duration-base
+            ${icon && iconPosition === 'left' ? 'pl-10' : ''}
+            ${icon && iconPosition === 'right' ? 'pr-10' : ''}
+            ${error
+                            ? 'border-accent-red focus:border-accent-red focus:ring-2 focus:ring-red-100'
+                            : 'border-neutral-300 focus:border-primary-main focus:ring-2 focus:ring-primary-50'
+                        }
+            ${disabled ? 'bg-neutral-100 text-neutral-500 cursor-not-allowed' : 'bg-white text-text-primary'}
+            placeholder:text-neutral-400
+            focus:outline-none
+          `}
+                    {...props}
+                />
+
+                {icon && iconPosition === 'right' && (
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500">
+                        {icon}
+                    </div>
+                )}
+            </div>
+
+            {(error || helperText) && (
+                <p className={`text-sm mt-1 ${error ? 'text-accent-red' : 'text-neutral-600'}`}>
+                    {error || helperText}
+                </p>
+            )}
+        </div>
+    );
+});
+
+Input.displayName = 'Input';
+
+Input.propTypes = {
+    type: PropTypes.string,
+    label: PropTypes.string,
+    placeholder: PropTypes.string,
+    value: PropTypes.string,
+    onChange: PropTypes.func,
+    onBlur: PropTypes.func,
+    name: PropTypes.string,
+    id: PropTypes.string,
+    error: PropTypes.string,
+    helperText: PropTypes.string,
+    disabled: PropTypes.bool,
+    required: PropTypes.bool,
+    icon: PropTypes.node,
+    iconPosition: PropTypes.oneOf(['left', 'right']),
+    className: PropTypes.string,
+};
+
+export default Input;
+
+===
+
+src/components/ui/OTPInput.jsx
+===
+import React, { useState, useRef, useEffect } from 'react';
+import PropTypes from 'prop-types';
+
+/**
+ * OTP Input Component
+ * For entering verification codes (default 6 digits)
+ */
+const OTPInput = ({
+    length = 6,
+    value = '',
+    onChange,
+    onComplete,
+    error = false,
+    disabled = false,
+    className = '',
+}) => {
+    const [otp, setOtp] = useState(value.split('').slice(0, length));
+    const inputRefs = useRef([]);
+
+    useEffect(() => {
+        setOtp(value.split('').slice(0, length));
+    }, [value, length]);
+
+    const handleChange = (index, e) => {
+        const val = e.target.value;
+
+        // Only allow numbers
+        if (val && !/^\d$/.test(val)) return;
+
+        const newOtp = [...otp];
+        newOtp[index] = val;
+        setOtp(newOtp);
+
+        // Call onChange with full OTP string
+        const otpString = newOtp.join('');
+        onChange(otpString);
+
+        // Auto-focus next input
+        if (val && index < length - 1) {
+            inputRefs.current[index + 1]?.focus();
+        }
+
+        // Call onComplete when all digits are filled
+        if (otpString.length === length && onComplete) {
+            onComplete(otpString);
+        }
+    };
+
+    const handleKeyDown = (index, e) => {
+        // Move to previous input on backspace
+        if (e.key === 'Backspace' && !otp[index] && index > 0) {
+            inputRefs.current[index - 1]?.focus();
+        }
+    };
+
+    const handlePaste = (e) => {
+        e.preventDefault();
+        const pastedData = e.clipboardData.getData('text').slice(0, length);
+
+        // Only allow numeric paste
+        if (!/^\d+$/.test(pastedData)) return;
+
+        const newOtp = pastedData.split('').slice(0, length);
+        setOtp(newOtp);
+
+        const otpString = newOtp.join('');
+        onChange(otpString);
+
+        // Focus last filled input
+        const lastIndex = Math.min(pastedData.length - 1, length - 1);
+        inputRefs.current[lastIndex]?.focus();
+
+        // Call onComplete if all filled
+        if (otpString.length === length && onComplete) {
+            onComplete(otpString);
+        }
+    };
+
+    const handleFocus = (e) => {
+        e.target.select();
+    };
+
+    return (
+        <div className={`flex gap-3 justify-center ${className}`}>
+            {Array.from({ length }).map((_, index) => (
+                <input
+                    key={index}
+                    ref={(el) => (inputRefs.current[index] = el)}
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={1}
+                    value={otp[index] || ''}
+                    onChange={(e) => handleChange(index, e)}
+                    onKeyDown={(e) => handleKeyDown(index, e)}
+                    onPaste={handlePaste}
+                    onFocus={handleFocus}
+                    disabled={disabled}
+                    className={`
+            w-14 h-14 text-center text-2xl font-semibold rounded-lg border-2 transition-all duration-base
+            ${error
+                            ? 'border-accent-red focus:border-accent-red focus:ring-2 focus:ring-red-100'
+                            : 'border-neutral-300 focus:border-primary-main focus:ring-2 focus:ring-primary-50'
+                        }
+            ${disabled ? 'bg-neutral-100 text-neutral-500 cursor-not-allowed' : 'bg-white text-text-primary'}
+            focus:outline-none
+          `}
+                />
+            ))}
+        </div>
+    );
+};
+
+OTPInput.propTypes = {
+    length: PropTypes.number,
+    value: PropTypes.string,
+    onChange: PropTypes.func.isRequired,
+    onComplete: PropTypes.func,
+    error: PropTypes.bool,
+    disabled: PropTypes.bool,
+    className: PropTypes.string,
+};
+
+export default OTPInput;
+
+===
+
+src/components/WizardStepLayout.jsx
+===
+import React from "react";
+import { Box, Container, IconButton, Typography, Button } from "@mui/material";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { useNavigate } from "react-router-dom";
+
+const WizardStepLayout = ({
+    stepText = "Step 1/7",
+    title,
+    subtitle,
+    onSkip,
+    onContinue,
+    children, // helper for main content
+    headerExtra // helper for content inside the blue header (e.g. My Home card)
+}) => {
+    const navigate = useNavigate();
+
+    return (
+        <Box sx={{ minHeight: "100vh", bgcolor: "#F4F7FA", pb: 10 }}>
+            {/* Header - Dark Blue Background */}
+            <Box sx={{
+                bgcolor: "#007BFF",
+                pt: 4,
+                pb: 12, // More padding bottom to allow overlap
+                color: "#fff",
+                borderBottomLeftRadius: 32,
+                borderBottomRightRadius: 32,
+                position: "relative"
+            }}>
+                <Container>
+                    {/* Top Navigation Row */}
+                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+                        <IconButton onClick={() => navigate(-1)} sx={{ color: "#fff" }}>
+                            <ArrowBackIcon />
+                        </IconButton>
+                        <Box sx={{ bgcolor: "rgba(255,255,255,0.2)", px: 1.5, py: 0.5, borderRadius: 2 }}>
+                            <Typography variant="caption" fontWeight="bold">{stepText}</Typography>
+                        </Box>
+                    </Box>
+
+                    {/* Title Section */}
+                    <Typography variant="h4" fontWeight="bold" textAlign="center" sx={{ mb: 1 }}>
+                        {title}
+                    </Typography>
+                    {subtitle && (
+                        <Typography variant="body2" textAlign="center" sx={{ opacity: 0.8 }}>
+                            {subtitle}
+                        </Typography>
+                    )}
+                </Container>
+            </Box>
+
+            {/* Main Content with Overlap Logic */}
+            <Container sx={{ mt: -6 }}> {/* Negative margin to pull content up */}
+                {children}
+            </Container>
+
+            {/* Sticky Footer */}
+            <Box sx={{
+                position: "fixed", bottom: 0, left: 0, right: 0,
+                bgcolor: "#fff", p: 2, borderTop: "1px solid #E2E8F0",
+                display: "flex", justifyContent: "space-between", alignItems: "center",
+                boxShadow: "0 -4px 10px rgba(0,0,0,0.05)",
+                zIndex: 100
+            }}>
+                <Button
+                    onClick={onSkip}
+                    sx={{ color: "#A0AEC0", textTransform: "none", fontWeight: 600, px: 3 }}
+                >
+                    Skip
+                </Button>
+                <Button
+                    variant="contained"
+                    onClick={onContinue}
+                    sx={{
+                        bgcolor: "#007BFF", color: "#fff", px: 4, py: 1, borderRadius: "10px",
+                        textTransform: "none", fontWeight: 700,
+                        "&:hover": { bgcolor: "#0056b3" },
+                        boxShadow: "0 4px 12px rgba(0, 123, 255, 0.3)"
+                    }}
+                >
+                    Continue
+                </Button>
+            </Box>
+        </Box>
+    );
+};
+
+export default WizardStepLayout;
+
+===
+
+src/contexts/HomeContext.jsx
+===
+import React, { createContext, useState, useContext, useEffect } from 'react';
+
+// Import Assets
+import officeImg from '../assets/icon/ChucNangWeb/office.png';
+import livingRoomImg from '../assets/icon/ChucNangWeb/Living room.png';
+import bedroomImg from '../assets/icon/ChucNangWeb/Bedroom.png';
+import kitchenImg from '../assets/icon/ChucNangWeb/Kitchen.png';
+import bathroomImg from '../assets/icon/ChucNangWeb/Bathroom.png';
+import anh1 from '../assets/icon/ChucNangWeb/anh1.png';
+
+const HomeContext = createContext();
+
+export const useHome = () => useContext(HomeContext);
+
+export const HomeProvider = ({ children }) => {
+    // Initial Mock Data
+    const [user, setUser] = useState({
+        name: "Scarlett",
+        avatar: anh1,
+        email: "scarlett@example.com"
+    });
+
+    const [spaces, setSpaces] = useState([]);
+
+    const [currentSpace, setCurrentSpace] = useState(null);
+
+    const [rooms, setRooms] = useState([]);
+
+    const [devices, setDevices] = useState([
+        { id: 1, name: "Smart Lamp", type: "light", roomId: 1, status: "on", brightness: 80, color: "#FFA500" },
+        { id: 2, name: "Speaker", type: "speaker", roomId: 1, status: "playing", volume: 45 },
+        { id: 3, name: "Air Conditioner", type: "ac", roomId: 2, status: "off", temp: 24 },
+        { id: 4, name: "Wi-Fi Router", type: "wifi", roomId: 3, status: "on" },
+        { id: 5, name: "Humidifier", type: "humidifier", roomId: 3, status: "off" }
+    ]);
+
+    const [statistics, setStatistics] = useState({
+        weeklyUsage: [
+            { day: 'Mon', kw: 12 },
+            { day: 'Tue', kw: 18 },
+            { day: 'Wed', kw: 10 },
+            { day: 'Thu', kw: 15 },
+            { day: 'Fri', kw: 22 },
+            { day: 'Sat', kw: 28 },
+            { day: 'Sun', kw: 20 },
+        ],
+        totalLoss: 450 // KW
+    });
+
+    const addSpace = (space) => {
+        setSpaces([...spaces, { ...space, id: Date.now() }]);
+    };
+
+    const addDevice = (device) => {
+        setDevices([...devices, { ...device, id: Date.now() }]);
+    };
+
+    const updateDevice = (id, updates) => {
+        setDevices(devices.map(d => d.id === id ? { ...d, ...updates } : d));
+    };
+
+    const removeDevice = (id) => {
+        setDevices(devices.filter(d => d.id !== id));
+    };
+
+    const value = {
+        user,
+        spaces,
+        currentSpace,
+        setCurrentSpace,
+        rooms,
+        devices,
+        statistics,
+        addSpace,
+        addDevice,
+        updateDevice,
+        removeDevice
+    };
+
+    return (
+        <HomeContext.Provider value={value}>
+            {children}
+        </HomeContext.Provider>
+    );
+};
+
+===
+
+src/index.css
+===
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light;
+  color: #333333;
+  background-color: #ffffff;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 1024px;
+  min-height: 100vh;
+  background-color: #ffffff;
+  color: #333333;
+  overflow-x: hidden;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Smooth transitions for all interactive elements */
+a,
+button,
+input,
+textarea,
+select {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F4F7FA;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CED4DA;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ADB5BD;
+}
+
+/* Focus styles for accessibility */
+*:focus-visible {
+  outline: 2px solid #007BFF;
+  outline-offset: 2px;
+}
+
+/* Utility classes */
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================
+   LANDING PAGE STYLES
+   ============================================ */
+
+.landing-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 80px 0 120px;
+  background: linear-gradient(135deg, #F5F5F5 0%, #F5F5F5 50%, #EEEEEE 50%, #EEEEEE 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.landing-content {
+  max-width: 500px;
+  animation: fadeIn 1s ease-out;
+}
+
+.landing-heading {
+  font-size: 48px;
+  font-weight: 800;
+  line-height: 1.2;
+  color: #333333;
+  margin-bottom: 24px;
+  letter-spacing: -0.5px;
+}
+
+.landing-subtitle {
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: #777777;
+  max-width: 420px;
+}
+
+.landing-illustration {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  animation: slideUp 1.2s ease-out;
+  position: relative;
+  right: -40px;
+}
+
+.house-icon {
+  width: 650px;
+  height: auto;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.house-icon:hover {
+  transform: scale(1.05);
+}
+
+/* ============================================
+   LOGIN PAGE STYLES
+   ============================================ */
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #F8F9FA;
+  padding: 40px;
+}
+
+.login-container {
+  display: grid;
+  grid-template-columns: 40% 60%;
+  max-width: 1000px;
+  width: 100%;
+  min-height: 600px;
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  animation: fadeIn 0.6s ease-out;
+}
+
+/* Left Panel - Illustration */
+.left-panel {
+  background: #F5F7FA;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.panel-house-icon {
+  width: 380px;
+  height: auto;
+  margin-bottom: 24px;
+  position: relative;
+  left: -30px;
+  top: -30px;
+}
+
+.panel-heading {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #333333;
+  margin-bottom: 12px;
+}
+
+.panel-text {
+  font-size: 14px;
+  color: #777777;
+  line-height: 1.5;
+  max-width: 280px;
+  margin-bottom: 24px;
+}
+
+.slider-dots {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #D0D5DD;
+  transition: all 0.3s ease;
+}
+
+.dot.active {
+  width: 12px;
+  height: 12px;
+  background: transparent;
+  border: 3px solid #2196F3;
+}
+
+/* Right Panel - Form */
+.right-panel {
+  background: #FAFAFA;
+  padding: 60px 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.form-header {
+  margin-bottom: 32px;
+}
+
+.form-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #333333;
+  margin-bottom: 8px;
+}
+
+.form-subtitle {
+  font-size: 16px;
+  color: #777777;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.input-group {
+  position: relative;
+}
+
+.input-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999999;
+  pointer-events: none;
+}
+
+.form-input {
+  width: 100%;
+  height: 48px;
+  padding: 0 14px 0 44px;
+  border: 2px solid #E0E0E0;
+  border-radius: 8px;
+  font-size: 15px;
+  color: #333333;
+  background: white;
+  transition: border-color 0.2s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #2196F3;
+}
+
+.form-input::placeholder {
+  color: #BDBDBD;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #999999;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.password-toggle:hover {
+  color: #555555;
+}
+
+.form-options {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #555555;
+  cursor: pointer;
+}
+
+.checkbox-input {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.forgot-password-row {
+  text-align: center;
+  margin: 8px 0 16px 0;
+}
+
+.forgot-link-centered {
+  font-size: 14px;
+  color: #2196F3;
+  text-decoration: none;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.forgot-link-centered:hover {
+  color: #1976D2;
+  text-decoration: underline;
+}
+
+.forgot-link:hover {
+  color: #1976D2;
+}
+
+.submit-btn {
+  width: 100%;
+  height: 48px;
+  background: #2196F3;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background 0.2s ease;
+}
+
+.submit-btn:hover {
+  background: #1976D2;
+}
+
+.divider {
+  position: relative;
+  text-align: center;
+  margin: 24px 0;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 45%;
+  height: 1px;
+  background: #E0E0E0;
+}
+
+.divider::before {
+  left: 0;
+}
+
+.divider::after {
+  right: 0;
+}
+
+.divider span {
+  padding: 0 16px;
+  background: #FAFAFA;
+  color: #999999;
+  font-size: 14px;
+}
+
+.social-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  height: 48px;
+  padding: 0 20px;
+  background: white;
+  border: 2px solid #E0E0E0;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #555555;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.social-btn:hover {
+  background: #F8F9FA;
+  border-color: #BDBDBD;
+}
+
+.social-separator {
+  width: 1px;
+  height: 24px;
+  background: #E0E0E0;
+  margin: 0 4px;
+}
+
+.social-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.signup-text {
+  text-align: center;
+  font-size: 14px;
+  color: #777777;
+  margin-top: 24px;
+}
+
+.signup-link {
+  color: #2196F3;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.signup-link:hover {
+  color: #1976D2;
+  text-decoration: underline;
+}
+===
+
+src/main.jsx
+===
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import './index.css'
+import App from './App.jsx'
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+)
+
+===
+
+src/pages/components/Sidebar.jsx
+===
+import React from 'react';
+import { Drawer, List, ListItemButton, ListItemIcon, ListItemText, Box, Typography, Avatar, Divider } from '@mui/material';
+import { useLocation, useNavigate } from 'react-router-dom';
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined'; // Spaces
+import MeetingRoomOutlinedIcon from '@mui/icons-material/MeetingRoomOutlined'; // Rooms
+import LightbulbOutlinedIcon from '@mui/icons-material/LightbulbOutlined'; // Devices
+import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline'; // Members
+import BarChartIcon from '@mui/icons-material/BarChart'; // Statistics
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
+import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
+
+import logo from '../../assets/icon/ChucNangWeb/logo.png';
+import avatar from '../../assets/icon/ChucNangWeb/anh1.png';
+
+const Sidebar = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
+    const drawerWidth = 280;
+
+    const menuItems = [
+        { text: 'Spaces', icon: <DashboardOutlinedIcon />, path: '/spaces' },
+        { text: 'Rooms', icon: <MeetingRoomOutlinedIcon />, path: '/rooms' },
+        { text: 'Devices', icon: <LightbulbOutlinedIcon />, path: '/link-devices' },
+        { text: 'Members', icon: <PeopleOutlineIcon />, path: '/members' },
+        { text: 'Statistics', icon: <BarChartIcon />, path: '/statistics' },
+    ];
+
+    return (
+        <Drawer
+            variant="permanent"
+            sx={{
+                width: drawerWidth,
+                flexShrink: 0,
+                '& .MuiDrawer-paper': {
+                    width: drawerWidth,
+                    boxSizing: 'border-box',
+                    borderRight: '1px solid #f0f0f0',
+                },
+            }}
+        >
+            {/* 1. Logo Section */}
+            <Box sx={{ p: 3, display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Box sx={{
+                    width: 40, height: 40,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center'
+                }}>
+                    <img src={logo} alt="SmartHouse Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                </Box>
+                <Typography variant="h6" fontWeight="bold" color="text.primary">smarthouse</Typography>
+            </Box>
+
+            {/* 2. User Info */}
+            <Box sx={{ px: 3, mb: 4, display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Avatar src={avatar} sx={{ width: 48, height: 48, border: '2px solid white', boxShadow: 1 }} />
+                <Box>
+                    <Typography variant="caption" color="text.secondary">Welcome home,</Typography>
+                    <Typography variant="subtitle1" fontWeight="bold">Kristin</Typography>
+                </Box>
+            </Box>
+
+            {/* 3. Menu Items */}
+            <List sx={{ px: 2 }}>
+                {menuItems.map((item) => {
+                    const active = location.pathname.includes(item.path); // Logic active đơn giản
+                    return (
+                        <ListItemButton
+                            key={item.text}
+                            onClick={() => navigate(item.path)}
+                            sx={{
+                                borderRadius: 3,
+                                mb: 1,
+                                bgcolor: active ? '#EBF5FF' : 'transparent',
+                                color: active ? '#007BFF' : 'text.secondary',
+                                '&:hover': { bgcolor: active ? '#EBF5FF' : '#F4F7FA' },
+                            }}
+                        >
+                            <ListItemIcon sx={{ color: active ? '#007BFF' : 'inherit', minWidth: 40 }}>
+                                {item.icon}
+                            </ListItemIcon>
+                            <ListItemText primary={item.text} primaryTypographyProps={{ fontWeight: active ? 600 : 400 }} />
+                        </ListItemButton>
+                    );
+                })}
+            </List>
+
+            <Box sx={{ flexGrow: 1 }} />
+
+            {/* 4. Footer Settings */}
+            <Divider sx={{ mx: 3, my: 2 }} />
+            <List sx={{ px: 2, pb: 3 }}>
+                <ListItemButton sx={{ borderRadius: 3, color: 'text.secondary' }}>
+                    <ListItemIcon sx={{ minWidth: 40 }}><SettingsOutlinedIcon /></ListItemIcon>
+                    <ListItemText primary="Profile & Settings" />
+                </ListItemButton>
+                <ListItemButton sx={{ borderRadius: 3, color: 'text.secondary', '&:hover': { color: 'error.main' } }}>
+                    <ListItemIcon sx={{ minWidth: 40 }}><LogoutOutlinedIcon /></ListItemIcon>
+                    <ListItemText primary="Log out" />
+                </ListItemButton>
+            </List>
+        </Drawer>
+    );
+};
+
+export default Sidebar;
+===
+
+src/pages/Dashboard.jsx
+===
+import React from 'react';
+import { Box, Typography, Paper, Grid, Avatar, AvatarGroup, Button } from '@mui/material';
+import { useHome } from '../contexts/HomeContext';
+import { useNavigate } from 'react-router-dom';
+import EmptySpace from './EmptySpace';
+
+// Import Icons/Images
+import livingRoomImg from '../assets/icon/ChucNangWeb/Living room.png';
+import bedroomImg from '../assets/icon/ChucNangWeb/Bedroom.png';
+import kitchenImg from '../assets/icon/ChucNangWeb/Kitchen.png';
+import bathroomImg from '../assets/icon/ChucNangWeb/Bathroom.png';
+import smartLampImg from '../assets/icon/ChucNangWeb/Smart Lamp.png';
+import airConditionerImg from '../assets/icon/ChucNangWeb/Air Conditioner.png';
+import humidifierImg from '../assets/icon/ChucNangWeb/Humidifier icon.png';
+import speakerImg from '../assets/icon/ChucNangWeb/Speaker.png';
+
+const Dashboard = () => {
+    const { currentSpace } = useHome(); // Assuming Basic Context
+    const navigate = useNavigate();
+
+    // Mock Data based on Assets
+    const rooms = [
+        { id: 1, name: 'Living Room', devices: 5, image: livingRoomImg },
+        { id: 2, name: 'Bedroom', devices: 3, image: bedroomImg },
+        { id: 3, name: 'Kitchen', devices: 4, image: kitchenImg },
+        { id: 4, name: 'Bathroom', devices: 2, image: bathroomImg },
+    ];
+
+    const popularDevices = [
+        { id: 1, name: 'Smart Lamp', status: 'On', image: smartLampImg, color: '#FFD700' },
+        { id: 2, name: 'Air Conditioner', status: '24°C', image: airConditionerImg, color: '#4FD1C5' },
+        { id: 3, name: 'Humidifier', status: 'Off', image: humidifierImg, color: '#63B3ED' },
+        { id: 4, name: 'Speaker', status: 'Playing', image: speakerImg, color: '#F687B3' },
+    ];
+
+    if (!currentSpace) {
+        return <EmptySpace />;
+    }
+
+    return (
+        <Box sx={{ p: 3 }}>
+            {/* Header Section with Current Space Card */}
+            <Paper
+                elevation={0}
+                sx={{
+                    p: 4,
+                    borderRadius: 4,
+                    background: 'linear-gradient(135deg, #667EEA 0%, #764BA2 100%)',
+                    color: 'white',
+                    mb: 5,
+                    position: 'relative',
+                    overflow: 'hidden',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between'
+                }}
+            >
+                {/* Decorative Circles */}
+                <Box sx={{ position: 'absolute', top: -50, right: -50, width: 200, height: 200, borderRadius: '50%', bgcolor: 'rgba(255,255,255,0.1)' }} />
+                <Box sx={{ position: 'absolute', bottom: -30, left: 50, width: 100, height: 100, borderRadius: '50%', bgcolor: 'rgba(255,255,255,0.1)' }} />
+
+                <Box sx={{ zIndex: 1 }}>
+                    <Typography variant="body2" sx={{ opacity: 0.8, textTransform: 'uppercase', letterSpacing: 1, mb: 1 }}>
+                        Current Space
+                    </Typography>
+                    <Typography variant="h3" fontWeight="bold" sx={{ mb: 1 }}>
+                        {currentSpace.name}
+                    </Typography>
+                    <Typography variant="h6" sx={{ opacity: 0.9, mb: 3 }}>
+                        {currentSpace.address}
+                    </Typography>
+
+                    <Box sx={{ display: 'flex', gap: 4 }}>
+                        <Box>
+                            <Typography variant="h4" fontWeight="bold">{rooms.length}</Typography>
+                            <Typography variant="caption" sx={{ opacity: 0.8 }}>Rooms</Typography>
+                        </Box>
+                        <Box>
+                            <Typography variant="h4" fontWeight="bold">{popularDevices.length}</Typography>
+                            <Typography variant="caption" sx={{ opacity: 0.8 }}>Devices</Typography>
+                        </Box>
+                        <Box>
+                            <Typography variant="h4" fontWeight="bold">{currentSpace.members || 3}</Typography>
+                            <Typography variant="caption" sx={{ opacity: 0.8 }}>Members</Typography>
+                        </Box>
+                    </Box>
+                </Box>
+
+                {/* Right Side: Members & Action */}
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2, zIndex: 1 }}>
+                    <AvatarGroup max={4} sx={{ '& .MuiAvatar-root': { width: 45, height: 45, border: '2px solid rgba(255,255,255,0.2)' } }}>
+                        <Avatar alt="Member 1" src="https://i.pravatar.cc/150?u=1" />
+                        <Avatar alt="Member 2" src="https://i.pravatar.cc/150?u=2" />
+                        <Avatar alt="Member 3" src="https://i.pravatar.cc/150?u=3" />
+                    </AvatarGroup>
+                    <Button
+                        variant="contained"
+                        sx={{
+                            bgcolor: 'rgba(255,255,255,0.2)',
+                            color: 'white',
+                            textTransform: 'none',
+                            backdropFilter: 'blur(10px)',
+                            '&:hover': { bgcolor: 'rgba(255,255,255,0.3)' }
+                        }}
+                        onClick={() => navigate('/spaces')}
+                    >
+                        Manage Space
+                    </Button>
+                </Box>
+            </Paper>
+
+            {/* Rooms Section */}
+            <Typography variant="h5" fontWeight="bold" sx={{ color: '#2D3748', mb: 3 }}>
+                Your Rooms
+            </Typography>
+            <Grid container spacing={3} sx={{ mb: 5 }}>
+                {rooms.map((room) => (
+                    <Grid item xs={12} sm={6} md={3} key={room.id}>
+                        <Paper
+                            elevation={0}
+                            sx={{
+                                p: 2,
+                                borderRadius: 3,
+                                height: '100%',
+                                cursor: 'pointer',
+                                transition: 'transform 0.3s, box-shadow 0.3s',
+                                '&:hover': { transform: 'translateY(-5px)', boxShadow: '0 10px 20px rgba(0,0,0,0.05)' },
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                textAlign: 'center'
+                            }}
+                            onClick={() => navigate('/rooms')}
+                        >
+                            <Box
+                                component="img"
+                                src={room.image}
+                                alt={room.name}
+                                sx={{ width: 80, height: 80, objectFit: 'contain', mb: 2 }}
+                            />
+                            <Typography variant="subtitle1" fontWeight="bold" sx={{ color: '#2D3748' }}>{room.name}</Typography>
+                            <Typography variant="caption" color="text.secondary">{room.devices} Devices</Typography>
+                        </Paper>
+                    </Grid>
+                ))}
+            </Grid>
+
+            {/* Popular Devices Section */}
+            <Typography variant="h5" fontWeight="bold" sx={{ color: '#2D3748', mb: 3 }}>
+                Popular Devices
+            </Typography>
+            <Grid container spacing={3}>
+                {popularDevices.map((device) => (
+                    <Grid item xs={12} sm={6} md={3} key={device.id}>
+                        <Paper
+                            elevation={0}
+                            sx={{
+                                p: 3,
+                                borderRadius: 3,
+                                height: '100%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 2,
+                                cursor: 'pointer',
+                                transition: 'all 0.3s',
+                                '&:hover': { boxShadow: '0 5px 15px rgba(0,0,0,0.05)' }
+                            }}
+                            onClick={() => navigate('/devices')}
+                        >
+                            <Box
+                                sx={{
+                                    width: 60, height: 60,
+                                    borderRadius: 3,
+                                    bgcolor: `${device.color}20`, // Light opacity background
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center'
+                                }}
+                            >
+                                <Box component="img" src={device.image} alt={device.name} sx={{ width: 40, height: 40, objectFit: 'contain' }} />
+                            </Box>
+                            <Box>
+                                <Typography variant="subtitle1" fontWeight="bold" sx={{ color: '#2D3748' }}>{device.name}</Typography>
+                                <Typography
+                                    variant="caption"
+                                    fontWeight="bold"
+                                    sx={{
+                                        color: device.status === 'On' ? 'success.main' : device.status === 'Off' ? 'text.secondary' : 'primary.main',
+                                        bgcolor: device.status === 'On' ? '#E6FFFA' : device.status === 'Off' ? '#EDF2F7' : '#EBF8FF',
+                                        px: 1, py: 0.5, borderRadius: 1
+                                    }}
+                                >
+                                    {device.status}
+                                </Typography>
+                            </Box>
+                        </Paper>
+                    </Grid>
+                ))}
+            </Grid>
+        </Box>
+    );
+};
+
+export default Dashboard;
+
+===
+
+src/pages/EmptySpace.jsx
+===
+import React from "react";
+import { Box, Typography, Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import MainLayout from "../components/MainLayout";
+import emptyIllustration from "../assets/icon/ChucNangWeb/image (2).png"; // Assuming image (2).png is the house/ghost illustration
+
+const EmptySpace = () => {
+    const navigate = useNavigate();
+
+    return (
+        <MainLayout>
+            <Box sx={{
+                minHeight: "calc(100vh - 64px)",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                bgcolor: "#fff", // White background as per mockup
+                p: 3,
+                textAlign: "center"
+            }}>
+                <Typography variant="h5" fontWeight="bold" sx={{ color: "#2D3748", mb: 1, fontSize: "1.5rem" }}>
+                    Looks like you have no spaces set up.
+                </Typography>
+
+                <Typography variant="body1" sx={{ color: "#718096", mb: 6 }}>
+                    Add your house and start your smart life!
+                </Typography>
+
+                {/* Illustration */}
+                <Box sx={{ width: "100%", maxWidth: 300, mb: 6 }}>
+                    <img
+                        src={emptyIllustration}
+                        alt="No Spaces"
+                        style={{ width: "100%", height: "auto", display: "block" }}
+                    />
+                </Box>
+
+                <Button
+                    variant="contained"
+                    onClick={() => navigate("/link-devices")}
+                    sx={{
+                        bgcolor: "#007BFF", // Bright blue
+                        color: "#fff",
+                        borderRadius: "12px", // Rounded corners
+                        px: 6,
+                        py: 1.5,
+                        textTransform: "none",
+                        fontSize: "1rem",
+                        fontWeight: 600,
+                        boxShadow: "none",
+                        "&:hover": { bgcolor: "#0069D9", boxShadow: "none" }
+                    }}
+                >
+                    Set up your space
+                </Button>
+            </Box>
+        </MainLayout>
+    );
+};
+
+export default EmptySpace;
+
+===
+
+src/pages/ForgotPassword.jsx
+===
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { Box, Typography, Button, TextField, InputAdornment, Grid } from '@mui/material';
+import { Mail, ArrowLeft, CheckCircle } from 'lucide-react';
+import houseIcon from '../assets/icon/Dangnhap/3_pixian_ai.png';
+
+const ForgotPassword = () => {
+    const navigate = useNavigate();
+    const [email, setEmail] = useState('');
+    const [emailSent, setEmailSent] = useState(false);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (email) {
+            setEmailSent(true);
+            setTimeout(() => navigate('/verify-code'), 3000);
+        }
+    };
+
+    return (
+        <Grid container sx={{ height: '100vh', width: '100vw', overflow: 'hidden' }}>
+
+            {/* --- CỘT TRÁI: HÌNH ẢNH (GIỮ NGUYÊN) --- */}
+            <Grid item xs={12} md={8} sx={{
+                bgcolor: '#F3F4F6',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                p: 4,
+                position: 'relative'
+            }}>
+                <Box sx={{
+                    flex: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '100%',
+                    mt: 2
+                }}>
+                    <img
+                        src={houseIcon}
+                        alt="Smart Home Forgot Password"
+                        style={{
+                            width: 'auto',
+                            maxWidth: '100%',
+                            maxHeight: '60vh',
+                            objectFit: 'contain',
+                            filter: 'drop-shadow(0px 10px 20px rgba(0,0,0,0.1))',
+                            transform: 'scale(1.35)',
+                        }}
+                    />
+                </Box>
+
+                <Box sx={{ textAlign: 'center', zIndex: 1, mb: 4, width: '100%' }}>
+                    <Typography variant="h3" sx={{
+                        fontWeight: 800,
+                        color: '#2D3748',
+                        mb: 1,
+                        lineHeight: 1.2,
+                        fontSize: { xs: '24px', lg: '36px' }
+                    }}>
+                        Easy living with your<br />
+                        smart home 💡
+                    </Typography>
+
+                    <Typography sx={{
+                        color: '#718096',
+                        maxWidth: '450px',
+                        mx: 'auto',
+                        fontSize: '15px',
+                        lineHeight: 1.5,
+                        mb: 3
+                    }}>
+                        Get your smart devices in one place and manage all of these with a few taps.
+                    </Typography>
+
+                    <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}>
+                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#CBD5E0' }} />
+                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#CBD5E0' }} />
+                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#3182CE' }} />
+                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#CBD5E0' }} />
+                    </Box>
+                </Box>
+            </Grid>
+
+            {/* --- CỘT PHẢI: FORM (ĐÃ ĐIỀU CHỈNH SANG PHẢI) --- */}
+            <Grid item xs={12} md={4} sx={{
+                bgcolor: 'white',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+
+                // THAY ĐỔI 1: Căn toàn bộ nội dung sang bên phải
+                alignItems: 'flex-end',
+
+                height: '100%',
+
+                // THAY ĐỔI 2: Điều chỉnh khoảng cách
+                // pr (Padding Right): Tạo khoảng cách vừa đủ với mép phải màn hình
+                // pl (Padding Left): Giảm đi vì không cần căn giữa nữa
+                pr: { xs: 3, md: 8, lg: 12 },
+                pl: { xs: 3, md: 2 }
+            }}>
+                {/* Box chứa form vẫn giữ maxWidth để form gọn gàng */}
+                <Box sx={{ width: '100%', maxWidth: '450px' }}>
+
+                    {!emailSent ? (
+                        <Box component="form" onSubmit={handleSubmit}>
+                            <Typography variant="h4" fontWeight="bold" sx={{ mb: 1, color: '#1A202C', textAlign: 'center' }}>
+                                Forgot password?
+                            </Typography>
+                            <Typography variant="body1" sx={{ mb: 4, color: '#718096', textAlign: 'center' }}>
+                                No worries, we'll send you reset instructions.
+                            </Typography>
+
+                            <TextField
+                                fullWidth
+                                placeholder="Enter your email"
+                                name="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                                InputProps={{
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <Mail size={20} color="#A0AEC0" />
+                                        </InputAdornment>
+                                    ),
+                                    sx: { borderRadius: '12px', height: '48px' }
+                                }}
+                                sx={{ mb: 3 }}
+                            />
+
+                            <Button
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                                sx={{
+                                    py: 1.5,
+                                    bgcolor: '#3182CE',
+                                    borderRadius: '12px',
+                                    textTransform: 'none',
+                                    fontWeight: 600,
+                                    fontSize: '16px',
+                                    boxShadow: 'none',
+                                    '&:hover': { bgcolor: '#2B6CB0', boxShadow: 'none' },
+                                    mb: 3
+                                }}
+                            >
+                                Reset password
+                            </Button>
+
+                            <Box sx={{ textAlign: 'center' }}>
+                                <Link
+                                    to="/login"
+                                    style={{
+                                        textDecoration: 'none',
+                                        color: '#718096',
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        fontSize: '14px',
+                                        fontWeight: 500
+                                    }}
+                                >
+                                    <ArrowLeft size={18} style={{ marginRight: '8px' }} /> Back to log in
+                                </Link>
+                            </Box>
+                        </Box>
+                    ) : (
+                        <Box sx={{ textAlign: 'center', animation: 'fadeIn 0.5s ease' }}>
+                            <Box sx={{
+                                width: 80,
+                                height: 80,
+                                bgcolor: '#F0FFF4',
+                                borderRadius: '50%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                mx: 'auto',
+                                mb: 3
+                            }}>
+                                <CheckCircle size={40} color="#38A169" />
+                            </Box>
+                            <Typography variant="h4" fontWeight="bold" sx={{ mb: 2, color: '#1A202C' }}>
+                                Check your email
+                            </Typography>
+                            <Typography variant="body1" sx={{ color: '#718096', lineHeight: 1.6, mb: 4 }}>
+                                We sent a password reset link to<br />
+                                <Box component="span" fontWeight="bold" color="#2D3748">{email}</Box>
+                            </Typography>
+
+                            <Button
+                                onClick={() => navigate('/login')}
+                                variant="outlined"
+                                sx={{
+                                    borderRadius: '12px',
+                                    textTransform: 'none',
+                                    borderColor: '#E2E8F0',
+                                    color: '#718096'
+                                }}
+                            >
+                                Back to log in
+                            </Button>
+                        </Box>
+                    )}
+                </Box>
+            </Grid>
+        </Grid>
+    );
+};
+
+export default ForgotPassword;
+===
+
+src/pages/Hello.jsx
+===
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Box, Typography, Button, Avatar } from '@mui/material';
+import { LampFloor, Speaker, Disc } from 'lucide-react'; // Import icon tượng trưng
+import userAvatar from '../assets/icon/Dangnhap/5_pixian_ai.png';
+
+const Hello = () => {
+  const navigate = useNavigate();
+
+  // Component con để tạo các Icon vệ tinh (Lamp, Speaker, etc.)
+  const FloatingIcon = ({ icon: Icon, top, left, right, bottom }) => (
+    <Box sx={{
+      position: 'absolute',
+      top, left, right, bottom,
+      width: 50,
+      height: 50,
+      bgcolor: 'white',
+      borderRadius: '50%',
+      boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 2,
+    }}>
+      <Icon size={24} color="#718096" />
+    </Box>
+  );
+
+  return (
+    <Box sx={{
+      minHeight: '100vh',
+      width: '100vw',
+      bgcolor: '#FFFFFF', // Nền trắng toàn màn hình
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      position: 'relative',
+      overflow: 'hidden' // Ngăn thanh cuộn nếu các vòng tròn quá to
+    }}>
+
+      {/* --- PHẦN TRUNG TÂM: AVATAR & CÁC VÒNG TRÒN --- */}
+      <Box sx={{
+        position: 'relative',
+        width: 400,
+        height: 400,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        mb: 2
+      }}>
+
+        {/* Vòng tròn 1 (Nhỏ nhất) */}
+        <Box sx={{
+          position: 'absolute',
+          width: '65%',
+          height: '65%',
+          borderRadius: '50%',
+          border: '1px solid #EDF2F7', // Màu viền xám rất nhạt
+        }} />
+
+        {/* Vòng tròn 2 (Vừa) */}
+        <Box sx={{
+          position: 'absolute',
+          width: '85%',
+          height: '85%',
+          borderRadius: '50%',
+          border: '1px solid #EDF2F7',
+        }} />
+
+        {/* Vòng tròn 3 (Lớn nhất) */}
+        <Box sx={{
+          position: 'absolute',
+          width: '100%',
+          height: '100%',
+          borderRadius: '50%',
+          border: '1px solid #EDF2F7',
+        }} />
+
+        {/* AVATAR Ở CHÍNH GIỮA */}
+        <Avatar
+          src={userAvatar}
+          alt="User Avatar"
+          sx={{
+            width: 140, // Avatar to hơn
+            height: 140,
+            zIndex: 10,
+            border: '5px solid #fff', // Viền trắng dày bao quanh avatar
+            boxShadow: '0 10px 25px rgba(0,0,0,0.1)'
+          }}
+        />
+
+        {/* CÁC ICON VỆ TINH (Căn chỉnh vị trí thủ công để khớp ảnh mẫu) */}
+        {/* 1. Cái đèn (Góc trên trái) */}
+        <FloatingIcon icon={LampFloor} top="15%" left="15%" />
+
+        {/* 2. Cái Loa (Góc trên phải - thấp hơn xíu) */}
+        <FloatingIcon icon={Speaker} top="25%" right="10%" />
+
+        {/* 3. Robot hút bụi (Góc dưới phải) */}
+        <FloatingIcon icon={Disc} bottom="20%" right="20%" />
+
+      </Box>
+
+      {/* --- PHẦN CHỮ & NÚT --- */}
+      <Box sx={{ textAlign: 'center', zIndex: 10, mt: 2 }}>
+        <Typography variant="h4" fontWeight="800" sx={{ color: '#2D3748', mb: 1 }}>
+          Hello, Kristin!
+        </Typography>
+
+        <Typography variant="body1" sx={{ color: '#718096', mb: 6 }}>
+          Good morning, welcome back.
+        </Typography>
+
+        <Button
+          variant="contained"
+          onClick={() => navigate('/dashboard')}
+          sx={{
+            width: 300, // Nút rộng nhưng không full màn hình
+            py: 1.8,
+            bgcolor: '#3182CE',
+            borderRadius: 3, // Bo tròn nhiều hơn
+            textTransform: 'none',
+            fontWeight: 600,
+            fontSize: '16px',
+            boxShadow: '0 4px 14px 0 rgba(49, 130, 206, 0.39)', // Bóng đổ xanh nhẹ cho nút
+            '&:hover': { bgcolor: '#2B6CB0' }
+          }}
+        >
+          Get started
+        </Button>
+      </Box>
+
+    </Box>
+  );
+};
+
+export default Hello;
+===
+
+src/pages/Landing.jsx
+===
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Box, Typography } from '@mui/material';
+import houseIcon from '../assets/icon/Dangnhap/1_pixian_ai.png';
+
+const Landing = () => {
+    const navigate = useNavigate();
+
+    return (
+        <Box sx={{
+            width: '100vw',
+            height: '100vh',
+            bgcolor: '#FFFFFF',
+            position: 'relative',
+            overflow: 'hidden',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+        }}>
+
+            {/* 1. LAYER NỀN XÁM (Cái bục) */}
+            <Box sx={{
+                position: 'absolute',
+                top: 0, right: 0, bottom: 0,
+                width: { xs: '100%', md: '80%' }, // Mở rộng nền xám ra chút
+                bgcolor: '#E8EAED',
+                zIndex: 0,
+                // --- CHỈNH ĐỘ DỐC Ở ĐÂY (Số đầu tiên: 25%) ---
+                // Tăng số này (ví dụ 40%) -> Đường chéo nằm ngang hơn
+                // Giảm số này (ví dụ 10%) -> Đường chéo dốc đứng hơn
+                clipPath: 'polygon(14% 0%, 150% 0%, 100% 100%, 80% 105%)',
+            }} />
+
+            <Box sx={{
+                position: 'relative',
+                width: '100%',
+                maxWidth: '1400px', // Cho phép khung chứa rộng tối đa
+                height: '100%',
+                display: 'flex',
+                zIndex: 1
+            }}>
+
+                {/* Phần CHỮ */}
+                <Box sx={{
+                    flex: 1, // Tăng flex lên để khung chữ rộng hơn, giúp từ 'your' không bị rớt dòng
+                    display: 'flex',
+                    flexDirection: 'column',
+
+                    // 1. DỊCH XUỐNG GỐC TRÁI:
+                    // 'flex-end' sẽ đẩy nội dung xuống đáy container
+                    justifyContent: 'flex-end',
+
+                    // 2. CĂN CHỈNH VỊ TRÍ:
+                    // pb (Padding Bottom): Đẩy cách đáy lên một khoảng (12 đơn vị ~ 96px)
+                    // pl (Padding Left): Đẩy cách lề trái ra một khoảng (8 đơn vị ~ 64px)
+                    pb: { xs: 5, md: 12 },
+                    pl: { xs: 4, md: 2 },
+
+                    zIndex: 2,
+                }}>
+                    <Typography component="h1" sx={{
+                        fontFamily: '"Google Sans", "Roboto", sans-serif',
+
+                        // 3. CHỮ NHỎ LẠI:
+                        // Giảm từ 56px xuống 48px (trên PC) để dòng chữ dài ra, đủ chỗ cho từ 'your'
+                        fontSize: { xs: '32px', md: '45px', lg: '48px' },
+                        fontWeight: 700,
+                        color: '#202124',
+                        lineHeight: 1.25,
+                        mb: 3, // Khoảng cách với dòng mô tả bên dưới
+                    }}>
+                        {/* Đặt thẻ br ngay sau chữ 'your' để ngắt dòng đúng ý bạn */}
+                        Easy living with your<br />
+                        smart home 💡
+                    </Typography>
+
+                    <Typography sx={{
+                        fontFamily: '"Roboto", sans-serif',
+                        fontSize: { xs: '15px', md: '16px' }, // Chữ mô tả cũng nhỏ lại xíu cho cân đối
+                        color: '#5F6368',
+                        lineHeight: 1.6,
+                        maxWidth: '400px', // Giới hạn chiều rộng để dòng mô tả ngắt đẹp
+                        fontWeight: 400
+                    }}>
+                        Get your smart devices in one place and manage all of these with a few taps.
+                    </Typography>
+                </Box>
+
+                {/* Phần ẢNH NGÔI NHÀ (Siêu to khổng lồ) */}
+                <Box sx={{
+                    flex: 1.5, // Dành phần lớn không gian cho ảnh
+                    position: 'relative',
+                    display: { xs: 'none', md: 'flex' },
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}>
+                    <img
+                        src={houseIcon}
+                        alt="Smart Home"
+                        onClick={() => navigate('/login')}
+                        style={{
+                            // --- CHỈNH KÍCH THƯỚC Ở ĐÂY ---
+                            width: '150%',       // Phóng to 150% chiều rộng khung chứa
+                            maxWidth: '1300px',  // Giới hạn tối đa cực lớn
+
+                            // --- CĂN CHỈNH VỊ TRÍ ĐỂ KHỚP VẠCH ---
+                            marginLeft: '-20%',  // Kéo sang trái (số âm càng lớn càng sang trái)
+                            marginTop: '2%',     // Đẩy xuống dưới (số dương càng lớn càng xuống)
+
+                            height: 'auto',
+                            objectFit: 'contain',
+                            filter: 'drop-shadow(-30px 30px 40px rgba(0,0,0,0.2))',
+                            cursor: 'pointer',
+                            transition: 'transform 0.3s'
+                        }}
+                    />
+                </Box>
+            </Box>
+        </Box>
+    );
+};
+
+export default Landing;
+===
+
+src/pages/LinkDevices.jsx
+===
+import React, { useState } from "react";
+import { Box, Typography, InputBase, Grid, IconButton, Paper, Button, Dialog, DialogTitle, DialogContent, FormControl, InputLabel, Select, MenuItem, DialogActions } from "@mui/material";
+import SearchIcon from '@mui/icons-material/Search';
+import DeviceCard from "../components/DeviceCard";
+import { useNavigate } from "react-router-dom";
+import { useHome } from "../contexts/HomeContext";
+
+// Import Assets
+import smartLampImg from '../assets/icon/ChucNangWeb/Smart Lamp.png';
+import airConImg from '../assets/icon/ChucNangWeb/Air Conditioner.png';
+import speakerImg from '../assets/icon/ChucNangWeb/Speaker.png';
+import wifiImg from '../assets/icon/ChucNangWeb/Humidifier icon.png'; // Using humidifier as placeholder/wifi if needed or just generic
+import tvImg from '../assets/icon/ChucNangWeb/Living room.png'; // Placeholder for TV if no specific icon
+
+// Mock list of discoverable devices
+const DISCOVERABLE_DEVICES = [
+    { id: 101, name: "Smart Lamp Pro", type: 'light', image: smartLampImg, status: "not connected" },
+    { id: 102, name: "Sonos Speaker", type: 'speaker', image: speakerImg, status: "not connected" },
+    { id: 103, name: "LG AirCon", type: 'ac', image: airConImg, status: "not connected" },
+    { id: 104, name: "Keen Humidifier", type: 'humidifier', image: wifiImg, status: "not connected" },
+];
+
+const LinkDevices = () => {
+    const navigate = useNavigate();
+    const { devices, addDevice, removeDevice, rooms } = useHome();
+    const [searchTerm, setSearchTerm] = useState("");
+
+    // Dialog State
+    const [openDialog, setOpenDialog] = useState(false);
+    const [selectedDevice, setSelectedDevice] = useState(null);
+    const [selectedRoom, setSelectedRoom] = useState("");
+
+    // Merge discoverable with already connected devices to show status
+    const getDeviceStatus = (devId) => {
+        // If device ID exists in context devices, it's connected
+        // Note: In real app, IDs would be unique GUIDs. Here we mock.
+        return devices.some(d => d.id === devId) ? "connected" : "not connected";
+    };
+
+    const handleConnectClick = (device) => {
+        // If already connected, we might want to disconnect?
+        if (getDeviceStatus(device.id) === "connected") {
+            // Find the real ID in context to remove
+            // In this simple mock, we assume ID match. 
+            // In reality, DISCOVERABLE has diff IDs from INSTALLED devices.
+            // We'll skip complex logic and just say "Contact Support to unpair" or simple remove if ID matches.
+            removeDevice(device.id);
+        } else {
+            setSelectedDevice(device);
+            setOpenDialog(true);
+        }
+    };
+
+    const handleConfirmConnect = () => {
+        if (!selectedRoom) return;
+
+        addDevice({
+            id: selectedDevice.id, // Keep same ID for simplicity in mock
+            name: selectedDevice.name,
+            type: selectedDevice.type,
+            roomId: selectedRoom,
+            status: 'on',
+            brightness: 50,
+            volume: 30
+        });
+
+        setOpenDialog(false);
+        setSelectedDevice(null);
+        setSelectedRoom("");
+    };
+
+    const filteredDevices = DISCOVERABLE_DEVICES.filter(d =>
+        d.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    return (
+        <Box>
+            <Paper
+                elevation={0}
+                sx={{
+                    borderRadius: 4,
+                    p: 3,
+                    mb: 4,
+                    background: 'linear-gradient(135deg, #4FD1C5 0%, #319795 100%)',
+                    color: 'white',
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    boxShadow: "0 10px 30px rgba(0,0,0,0.1)"
+                }}
+            >
+                <Box>
+                    <Typography variant="h6" fontWeight="bold">My Home</Typography>
+                    <Typography variant="body2" sx={{ opacity: 0.8 }}>Discover and link new devices</Typography>
+                </Box>
+                <Box sx={{ textAlign: "right" }}>
+                    <Typography variant="h4" fontWeight="bold">{devices.length}</Typography>
+                    <Typography variant="caption" sx={{ opacity: 0.8 }}>Connected Devices</Typography>
+                </Box>
+            </Paper>
+
+            {/* Search Bar */}
+            <Box sx={{
+                bgcolor: "#fff", borderRadius: 3, p: "4px 16px", mb: 4,
+                display: "flex", alignItems: "center",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.02)",
+                border: "1px solid #EDF2F7",
+                height: 56
+            }}>
+                <InputBase
+                    placeholder="Search smart devices..."
+                    fullWidth
+                    sx={{ fontSize: "0.95rem", color: "#4A5568", ml: 1 }}
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                <IconButton sx={{ color: "#A0AEC0" }}>
+                    <SearchIcon />
+                </IconButton>
+            </Box>
+
+            {/* Grid of Devices */}
+            <Box sx={{ mb: 2 }}>
+                <Typography variant="subtitle1" sx={{ color: "#718096", mb: 1 }}>Nearby Devices</Typography>
+            </Box>
+
+            <Grid container spacing={3}>
+                {filteredDevices.map((device) => {
+                    const isConnected = getDeviceStatus(device.id) === "connected";
+                    return (
+                        <Grid item xs={12} sm={6} md={4} key={device.id}>
+                            <Box onClick={() => handleConnectClick(device)} sx={{ cursor: 'pointer' }}>
+                                <DeviceCard
+                                    name={device.name}
+                                    image={device.image}
+                                    status={isConnected ? "connected" : "not connected"}
+                                    isConnected={isConnected}
+                                />
+                            </Box>
+                        </Grid>
+                    );
+                })}
+            </Grid>
+
+            {/* Room Selection Dialog */}
+            <Dialog open={openDialog} onClose={() => setOpenDialog(false)} fullWidth maxWidth="xs">
+                <DialogTitle>Add to Room</DialogTitle>
+                <DialogContent>
+                    <Typography variant="body2" sx={{ mb: 2 }}>
+                        Where is the <b>{selectedDevice?.name}</b> located?
+                    </Typography>
+                    <FormControl fullWidth>
+                        <InputLabel>Select Room</InputLabel>
+                        <Select
+                            value={selectedRoom}
+                            label="Select Room"
+                            onChange={(e) => setSelectedRoom(e.target.value)}
+                        >
+                            {rooms.map(room => (
+                                <MenuItem key={room.id} value={room.id}>{room.name}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
+                    <Button variant="contained" onClick={handleConfirmConnect} disabled={!selectedRoom}>
+                        Connect
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </Box>
+    );
+};
+
+export default LinkDevices;
+===
+
+src/pages/Login.jsx
+===
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { Box, Typography, Button, Checkbox, FormControlLabel, Divider, IconButton, InputAdornment, TextField, Grid } from '@mui/material';
+import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { FcGoogle } from 'react-icons/fc';
+import { FaFacebook, FaApple } from 'react-icons/fa';
+import houseIcon from '../assets/icon/Dangnhap/2_pixian_ai.png';
+
+const Login = () => {
+    const navigate = useNavigate();
+    const [showPassword, setShowPassword] = useState(false);
+    const [formData, setFormData] = useState({
+        email: '',
+        password: '',
+        rememberMe: false
+    });
+
+    const handleChange = (e) => {
+        const { name, value, checked, type } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: type === 'checkbox' ? checked : value
+        }));
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (formData.email && formData.password) {
+            navigate('/verify-code');
+        }
+    };
+
+    return (
+        <Grid container sx={{ height: '100vh', width: '100vw', overflow: 'hidden' }}>
+
+            {/* --- CỘT TRÁI: HÌNH ẢNH (CHIẾM 8 PHẦN - 66%) --- */}
+            {/* Tăng từ md={6} lên md={8} để cột này rộng ra, đẩy form sát về bên phải */}
+            <Grid item xs={12} md={8} sx={{
+                bgcolor: '#F3F4F6',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                p: 4,
+                position: 'relative'
+            }}>
+                {/* Phần chứa ảnh */}
+                <Box sx={{
+                    flex: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '100%',
+                    mt: 2
+                }}>
+                    <img
+                        src={houseIcon}
+                        alt="Smart Home Login"
+                        style={{
+                            width: 'auto',
+                            maxWidth: '500%',
+                            maxHeight: '65vh', // Giữ chiều cao ổn định
+                            objectFit: 'contain',
+                            filter: 'drop-shadow(0px 10px 20px rgba(0,0,0,0.1))',
+                        }}
+                    />
+                </Box>
+
+                {/* Phần Chữ */}
+                <Box sx={{
+                    textAlign: 'center',
+                    zIndex: 1,
+                    mb: 4,
+                    width: '100%'
+                }}>
+                    <Typography variant="h3" sx={{
+                        fontWeight: 800,
+                        color: '#2D3748',
+                        mb: 1,
+                        lineHeight: 1.2,
+                        fontSize: { xs: '24px', lg: '36px' }
+                    }}>
+                        Easy living with your<br />
+                        smart home 💡
+                    </Typography>
+
+                    <Typography sx={{
+                        color: '#718096',
+                        maxWidth: '450px',
+                        mx: 'auto',
+                        fontSize: '15px',
+                        lineHeight: 1.5,
+                        mb: 3
+                    }}>
+                        Get your smart devices in one place and manage all of these with a few taps.
+                    </Typography>
+
+                    <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}>
+                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#CBD5E0' }} />
+                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#3182CE' }} />
+                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#CBD5E0' }} />
+                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#CBD5E0' }} />
+                    </Box>
+                </Box>
+            </Grid>
+
+            {/* --- CỘT PHẢI: FORM LOGIN (CHIẾM 4 PHẦN - 33%) --- */}
+            {/* Giảm từ md={6} xuống md={4} để form nằm gọn gàng, không còn đất trống */}
+            <Grid item xs={12} md={4} sx={{
+                bgcolor: 'white',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center', // Căn giữa trong cột nhỏ sẽ tự động nhìn cân đối
+                height: '100%',
+                // Padding vừa phải để không bị dính sát mép màn hình
+                px: { xs: 3, md: 4, lg: 5 }
+            }}>
+                <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%', maxWidth: '450px' }}>
+
+                    <Typography variant="h4" fontWeight="bold" sx={{ mb: 1, color: '#1A202C', textAlign: 'center' }}>
+                        Login
+                    </Typography>
+                    <Typography variant="body1" sx={{ mb: 3, color: '#718096', textAlign: 'center' }}>
+                        Welcome back! Please enter your details.
+                    </Typography>
+
+                    <TextField
+                        fullWidth
+                        placeholder="@gmail.com"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <Mail size={20} color="#A0AEC0" />
+                                </InputAdornment>
+                            ),
+                            sx: { borderRadius: '12px', height: '48px' }
+                        }}
+                        sx={{ mb: 2 }}
+                    />
+
+                    <TextField
+                        fullWidth
+                        type={showPassword ? 'text' : 'password'}
+                        placeholder="Password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <Lock size={20} color="#A0AEC0" />
+                                </InputAdornment>
+                            ),
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                            sx: { borderRadius: '12px', height: '48px' }
+                        }}
+                        sx={{ mb: 1.5 }}
+                    />
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    name="rememberMe"
+                                    checked={formData.rememberMe}
+                                    onChange={handleChange}
+                                    sx={{ color: '#CBD5E0', '&.Mui-checked': { color: '#3182CE' } }}
+                                />
+                            }
+                            label={<Typography variant="body2" color="#718096">Remember information</Typography>}
+                        />
+                    </Box>
+
+                    <Button
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        sx={{
+                            py: 1.5,
+                            bgcolor: '#3182CE',
+                            borderRadius: '12px',
+                            textTransform: 'none',
+                            fontWeight: 600,
+                            fontSize: '16px',
+                            boxShadow: 'none',
+                            '&:hover': { bgcolor: '#2B6CB0', boxShadow: 'none' },
+                            mb: 2
+                        }}
+                    >
+                        Login
+                    </Button>
+
+                    <Box sx={{ textAlign: 'center', mb: 3 }}>
+                        <Link to="/forgot-password" style={{ textDecoration: 'none', color: '#3182CE', fontSize: '14px', fontWeight: 600 }}>
+                            Forgot password?
+                        </Link>
+                    </Box>
+
+                    <Divider sx={{ mb: 3, color: '#A0AEC0', fontSize: '14px' }}>or</Divider>
+
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, mb: 3 }}>
+                        <Button
+                            fullWidth
+                            variant="outlined"
+                            startIcon={<FcGoogle size={22} />}
+                            sx={{
+                                py: 1,
+                                borderColor: '#E2E8F0',
+                                color: '#2D3748',
+                                textTransform: 'none',
+                                borderRadius: '12px',
+                                fontWeight: 500,
+                                '&:hover': { bgcolor: '#F7FAFC', borderColor: '#CBD5E0' }
+                            }}
+                        >
+                            Login with Google
+                        </Button>
+                        <Button
+                            fullWidth
+                            variant="outlined"
+                            startIcon={<FaFacebook size={22} color="#1877F2" />}
+                            sx={{
+                                py: 1,
+                                borderColor: '#E2E8F0',
+                                color: '#2D3748',
+                                textTransform: 'none',
+                                borderRadius: '12px',
+                                fontWeight: 500,
+                                '&:hover': { bgcolor: '#F7FAFC', borderColor: '#CBD5E0' }
+                            }}
+                        >
+                            Login with Facebook
+                        </Button>
+                        <Button
+                            fullWidth
+                            variant="outlined"
+                            startIcon={<FaApple size={22} color="#000" />}
+                            sx={{
+                                py: 1,
+                                borderColor: '#E2E8F0',
+                                color: '#2D3748',
+                                textTransform: 'none',
+                                borderRadius: '12px',
+                                fontWeight: 500,
+                                '&:hover': { bgcolor: '#F7FAFC', borderColor: '#CBD5E0' }
+                            }}
+                        >
+                            Login with Apple
+                        </Button>
+                    </Box>
+
+                    <Box sx={{ textAlign: 'center' }}>
+                        <Typography variant="body2" color="#718096">
+                            First time here?{' '}
+                            <Link to="/register" style={{ textDecoration: 'none', color: '#3182CE', fontWeight: 600 }}>
+                                Sign up for free
+                            </Link>
+                        </Typography>
+                    </Box>
+                </Box>
+            </Grid>
+        </Grid>
+    );
+};
+
+export default Login;
+===
+
+src/pages/Mainlayout.jsx
+===
+import React from 'react';
+import { Box, CssBaseline } from '@mui/material';
+import Sidebar from './components/Sidebar';
+
+const MainLayout = ({ children }) => {
+    return (
+        <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#F4F7FA' }}>
+            <CssBaseline />
+
+            {/* Sidebar cố định bên trái */}
+            <Sidebar />
+
+            {/* Nội dung chính bên phải */}
+            <Box component="main" sx={{ flexGrow: 1, p: 0, width: { sm: `calc(100% - 280px)` } }}>
+                {children}
+            </Box>
+        </Box>
+    );
+};
+
+export default MainLayout;
+===
+
+src/pages/Profile.jsx
+===
+import React, { useState } from 'react';
+import { Box, Typography, Paper, Grid, Avatar, Button, Switch, Divider, List, ListItem, ListItemText, ListItemSecondaryAction, TextField } from '@mui/material';
+import { useHome } from '../contexts/HomeContext';
+import { useNavigate } from 'react-router-dom';
+import { Logout } from '@mui/icons-material';
+
+const Profile = () => {
+    const { user } = useHome();
+    const navigate = useNavigate();
+    const [notifications, setNotifications] = useState(true);
+    const [darkMode, setDarkMode] = useState(false);
+
+    const handleLogout = () => {
+        // Implement logout logic here (clear tokens etc)
+        navigate('/login');
+    };
+
+    return (
+        <Box maxWidth="md">
+            <Typography variant="h5" fontWeight="bold" sx={{ color: '#2D3748', mb: 4 }}>
+                Profile Settings
+            </Typography>
+
+            <Grid container spacing={4}>
+                {/* Account Info */}
+                <Grid item xs={12} md={4}>
+                    <Paper sx={{ p: 4, borderRadius: 4, textAlign: 'center' }}>
+                        <Avatar
+                            src={user.avatar}
+                            sx={{ width: 100, height: 100, margin: '0 auto', mb: 2, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                        />
+                        <Typography variant="h6" fontWeight="bold" sx={{ color: '#2D3748' }}>{user.name}</Typography>
+                        <Typography variant="body2" sx={{ color: '#A0AEC0', mb: 3 }}>{user.email}</Typography>
+
+                        <Button
+                            variant="outlined"
+                            color="error"
+                            startIcon={<Logout />}
+                            fullWidth
+                            onClick={handleLogout}
+                            sx={{ borderRadius: 2, textTransform: 'none' }}
+                        >
+                            Log Out
+                        </Button>
+                    </Paper>
+                </Grid>
+
+                {/* Settings Forms */}
+                <Grid item xs={12} md={8}>
+                    <Paper sx={{ p: 4, borderRadius: 4, mb: 4 }}>
+                        <Typography variant="h6" fontWeight="bold" sx={{ mb: 3, color: '#2D3748' }}>
+                            Account Information
+                        </Typography>
+                        <Grid container spacing={3}>
+                            <Grid item xs={12} sm={6}>
+                                <TextField fullWidth label="Full Name" defaultValue={user.name} variant="outlined" />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <TextField fullWidth label="Email" defaultValue={user.email} variant="outlined" />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField fullWidth label="Address" defaultValue="123 Smart Street, Tech City" variant="outlined" />
+                            </Grid>
+                        </Grid>
+                        <Box sx={{ mt: 3, textAlign: 'right' }}>
+                            <Button variant="contained" sx={{ bgcolor: '#4FD1C5', '&:hover': { bgcolor: '#319795' }, textTransform: 'none', borderRadius: 2 }}>
+                                Save Changes
+                            </Button>
+                        </Box>
+                    </Paper>
+
+                    <Paper sx={{ p: 4, borderRadius: 4 }}>
+                        <Typography variant="h6" fontWeight="bold" sx={{ mb: 2, color: '#2D3748' }}>
+                            Preferences
+                        </Typography>
+                        <List>
+                            <ListItem disableGutters>
+                                <ListItemText primary="Push Notifications" secondary="Receive alerts about your home" />
+                                <ListItemSecondaryAction>
+                                    <Switch checked={notifications} onChange={() => setNotifications(!notifications)} color="primary" />
+                                </ListItemSecondaryAction>
+                            </ListItem>
+                            <Divider component="li" />
+                            <ListItem disableGutters>
+                                <ListItemText primary="Dark Mode" secondary="Switch between light and dark themes" />
+                                <ListItemSecondaryAction>
+                                    <Switch checked={darkMode} onChange={() => setDarkMode(!darkMode)} color="primary" />
+                                </ListItemSecondaryAction>
+                            </ListItem>
+                        </List>
+                    </Paper>
+                </Grid>
+            </Grid>
+        </Box>
+    );
+};
+
+export default Profile;
+
+===
+
+src/pages/ResetPassword.jsx
+===
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Box, Typography, Button, TextField, InputAdornment, IconButton, List, ListItem, ListItemIcon, ListItemText, Grid, LinearProgress } from '@mui/material';
+import { Eye, EyeOff, Check, Circle } from 'lucide-react'; // Dùng Circle làm dấu chấm tròn
+import securityIcon from '../assets/icon/Dangnhap/3_pixian_ai.png';
+
+const ResetPassword = () => {
+    const navigate = useNavigate();
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [formData, setFormData] = useState({
+        password: '',
+        confirmPassword: ''
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    // --- LOGIC KIỂM TRA MỚI (Theo ảnh mẫu) ---
+    const hasMinLength = formData.password.length >= 8;
+    // Số (0-9) HOẶC Ký tự đặc biệt
+    const hasNumberOrSymbol = /[0-9!@#$%^&*(),.?":{}|<>]/.test(formData.password);
+    // Chữ thường (a-z) VÀ Chữ hoa (A-Z)
+    const hasUpperAndLower = /[a-z]/.test(formData.password) && /[A-Z]/.test(formData.password);
+
+    // Tính điểm độ mạnh mật khẩu (0 - 3)
+    const strengthScore = [hasMinLength, hasNumberOrSymbol, hasUpperAndLower].filter(Boolean).length;
+
+    // Màu sắc thanh tiến trình dựa trên điểm số
+    const getStrengthColor = () => {
+        if (strengthScore === 0) return '#E2E8F0'; // Xám
+        if (strengthScore === 1) return '#E53E3E'; // Đỏ (Yếu)
+        if (strengthScore === 2) return '#ECC94B'; // Vàng (Trung bình - Giống ảnh mẫu)
+        return '#38A169'; // Xanh (Mạnh)
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (strengthScore === 3 && formData.password === formData.confirmPassword) {
+            navigate('/hello');
+        }
+    };
+
+    // Component hiển thị dòng điều kiện
+    const RequirementItem = ({ fulfilled, text }) => (
+        <ListItem disablePadding sx={{ py: 0.3 }}>
+            <ListItemIcon sx={{ minWidth: 24 }}>
+                {fulfilled ? (
+                    <Check size={16} color="#38A169" /> // Tích xanh
+                ) : (
+                    <Circle size={8} fill="#A0AEC0" color="#A0AEC0" /> // Chấm tròn xám
+                )}
+            </ListItemIcon>
+            <ListItemText
+                primary={text}
+                primaryTypographyProps={{
+                    variant: 'caption',
+                    color: fulfilled ? '#38A169' : '#A0AEC0', // Đạt thì xanh, chưa thì xám
+                    fontWeight: 500,
+                    fontSize: '13px'
+                }}
+            />
+        </ListItem>
+    );
+
+    return (
+        <Grid container sx={{ height: '100vh', width: '100vw', overflow: 'hidden' }}>
+
+            {/* --- CỘT TRÁI: GIỮ NGUYÊN (9 PHẦN) --- */}
+            <Grid item xs={12} md={9} sx={{
+                bgcolor: '#F3F4F6',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                p: 4,
+                position: 'relative'
+            }}>
+                <Box sx={{
+                    flex: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '100%',
+                    mt: 2
+                }}>
+                    <img
+                        src={securityIcon}
+                        alt="Reset Password"
+                        style={{
+                            width: 'auto',
+                            maxWidth: '100%',
+                            maxHeight: '60vh',
+                            objectFit: 'contain',
+                            filter: 'drop-shadow(0px 10px 20px rgba(0,0,0,0.1))',
+                            transform: 'scale(1.35)',
+                        }}
+                    />
+                </Box>
+                {/* Footer Text */}
+                <Box sx={{ textAlign: 'center', zIndex: 1, mb: 4, width: '100%' }}>
+                    <Typography variant="h3" sx={{ fontWeight: 800, color: '#2D3748', mb: 1, lineHeight: 1.2, fontSize: { xs: '24px', lg: '36px' } }}>
+                        Easy living with your<br />smart home 💡
+                    </Typography>
+                    <Typography sx={{ color: '#718096', maxWidth: '450px', mx: 'auto', fontSize: '15px', lineHeight: 1.5, mb: 3 }}>
+                        Get your smart devices in one place and manage all of these with a few taps.
+                    </Typography>
+                    <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}>
+                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#CBD5E0' }} />
+                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#CBD5E0' }} />
+                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#CBD5E0' }} />
+                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#3182CE' }} />
+                    </Box>
+                </Box>
+            </Grid>
+
+            {/* --- CỘT PHẢI: FORM CHUẨN ẢNH MẪU (3 PHẦN) --- */}
+            <Grid item xs={12} md={3} sx={{
+                bgcolor: 'white',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100%',
+                px: { xs: 3, md: 3 }
+            }}>
+                <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%' }}>
+
+                    <Typography variant="h5" fontWeight="bold" sx={{ mb: 4, color: '#1A202C', textAlign: 'center' }}>
+                        Reset password
+                    </Typography>
+
+                    {/* Ô nhập mật khẩu mới */}
+                    <TextField
+                        fullWidth
+                        type={showPassword ? 'text' : 'password'}
+                        placeholder="..............." // Placeholder giống ảnh
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end" size="small">
+                                        {showPassword ? <EyeOff size={18} color="#CBD5E0" /> : <Eye size={18} color="#CBD5E0" />}
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                            sx: { borderRadius: '10px', height: '45px', fontSize: '14px', bgcolor: '#F7FAFC' }
+                        }}
+                        // Xóa viền dưới mặc định để thanh progress bar nhìn liền mạch hơn
+                        sx={{ mb: 0 }}
+                    />
+
+                    {/* THANH ĐO ĐỘ MẠNH (Strength Meter) */}
+                    <Box sx={{ width: '100%', mb: 2, mt: 0.5 }}>
+                        <LinearProgress
+                            variant="determinate"
+                            value={(strengthScore / 3) * 100}
+                            sx={{
+                                height: 4,
+                                borderRadius: 2,
+                                bgcolor: '#EDF2F7', // Màu nền xám nhạt
+                                '& .MuiLinearProgress-bar': {
+                                    bgcolor: getStrengthColor(), // Màu thay đổi theo độ mạnh
+                                    transition: 'background-color 0.3s'
+                                }
+                            }}
+                        />
+                    </Box>
+
+                    {/* DANH SÁCH ĐIỀU KIỆN (Checklist) */}
+                    <List dense sx={{ mb: 3, pl: 1 }}>
+                        <RequirementItem fulfilled={hasMinLength} text="Least 8 characters" />
+                        <RequirementItem fulfilled={hasNumberOrSymbol} text="Least one number (0-9) or symbol" />
+                        <RequirementItem fulfilled={hasUpperAndLower} text="Lowercase (a-z) and uppercase (A-Z)" />
+                    </List>
+
+                    {/* Ô nhập lại mật khẩu */}
+                    <TextField
+                        fullWidth
+                        type={showConfirmPassword ? 'text' : 'password'}
+                        placeholder="Confirm new password"
+                        name="confirmPassword"
+                        value={formData.confirmPassword}
+                        onChange={handleChange}
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton onClick={() => setShowConfirmPassword(!showConfirmPassword)} edge="end" size="small">
+                                        {showConfirmPassword ? <EyeOff size={18} color="#CBD5E0" /> : <Eye size={18} color="#CBD5E0" />}
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                            sx: { borderRadius: '10px', height: '45px', fontSize: '14px', bgcolor: '#F7FAFC' }
+                        }}
+                        sx={{ mb: 4 }}
+                    />
+
+                    <Button
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        sx={{
+                            py: 1.2,
+                            bgcolor: '#3182CE',
+                            borderRadius: '10px',
+                            textTransform: 'none',
+                            fontWeight: 600,
+                            fontSize: '15px',
+                            boxShadow: 'none',
+                            '&:hover': { bgcolor: '#2B6CB0', boxShadow: 'none' }
+                        }}
+                    >
+                        Submitting
+                    </Button>
+                </Box>
+            </Grid>
+        </Grid>
+    );
+};
+
+export default ResetPassword;
+===
+
+src/pages/RoomDetail.jsx
+===
+import React, { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Box, Typography, Grid, Paper, Switch, IconButton, Slider, Dialog, DialogTitle, DialogContent, TextField, DialogActions } from '@mui/material';
+import { ArrowBack, Thermostat, Opacity, Lightbulb, VolumeUp, Wifi, AcUnit, AccessTime } from '@mui/icons-material';
+import { useHome } from '../contexts/HomeContext';
+
+const RoomDetail = () => {
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const { rooms, devices, updateDevice } = useHome();
+
+    // Schedule State
+    const [openSchedule, setOpenSchedule] = useState(false);
+    const [schedulingDevice, setSchedulingDevice] = useState(null);
+    const [scheduleTime, setScheduleTime] = useState('07:00');
+
+    // Find room and associated devices
+    const room = rooms.find(r => r.id === parseInt(id));
+    const roomDevices = devices.filter(d => d.roomId === parseInt(id));
+
+    if (!room) {
+        return <Typography>Room not found</Typography>;
+    }
+
+    const getDeviceIcon = (type) => {
+        switch (type) {
+            case 'light': return <Lightbulb />;
+            case 'speaker': return <VolumeUp />;
+            case 'ac': return <AcUnit />;
+            case 'wifi': return <Wifi />;
+            default: return <Lightbulb />;
+        }
+    };
+
+    const handleOpenSchedule = (device) => {
+        setSchedulingDevice(device);
+        setScheduleTime(device.schedule || '07:00');
+        setOpenSchedule(true);
+    };
+
+    const handleSaveSchedule = () => {
+        if (schedulingDevice) {
+            updateDevice(schedulingDevice.id, { schedule: scheduleTime });
+            setOpenSchedule(false);
+            setSchedulingDevice(null);
+        }
+    };
+
+    return (
+        <Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
+                <IconButton onClick={() => navigate('/rooms')} sx={{ mr: 2, bgcolor: 'white', ml: -1 }}>
+                    <ArrowBack />
+                </IconButton>
+                <Typography variant="h5" fontWeight="bold" sx={{ color: '#2D3748' }}>
+                    {room.name}
+                </Typography>
+            </Box>
+
+            {/* Environmental Stats */}
+            <Grid container spacing={3} sx={{ mb: 4 }}>
+                <Grid item xs={12} sm={6}>
+                    <Paper sx={{ p: 3, borderRadius: 4, bgcolor: '#FFF5F5', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Box>
+                            <Typography variant="body2" sx={{ color: '#E53E3E', fontWeight: 600 }}>Temperature</Typography>
+                            <Typography variant="h3" fontWeight="bold" sx={{ color: '#2D3748' }}>{room.temp}°c</Typography>
+                        </Box>
+                        <Thermostat sx={{ fontSize: 60, color: '#E53E3E', opacity: 0.2 }} />
+                    </Paper>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                    <Paper sx={{ p: 3, borderRadius: 4, bgcolor: '#E6FFFA', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Box>
+                            <Typography variant="body2" sx={{ color: '#319795', fontWeight: 600 }}>Humidity</Typography>
+                            <Typography variant="h3" fontWeight="bold" sx={{ color: '#2D3748' }}>{room.humidity}%</Typography>
+                        </Box>
+                        <Opacity sx={{ fontSize: 60, color: '#319795', opacity: 0.2 }} />
+                    </Paper>
+                </Grid>
+            </Grid>
+
+            {/* Devices Section */}
+            <Typography variant="h6" fontWeight="bold" sx={{ mb: 3, color: '#2D3748' }}>Devices</Typography>
+
+            <Grid container spacing={3}>
+                {roomDevices.map((device) => (
+                    <Grid item xs={12} md={6} lg={4} key={device.id}>
+                        <Paper sx={{ p: 3, borderRadius: 3, transition: 'all 0.3s', '&:hover': { boxShadow: '0 10px 20px rgba(0,0,0,0.05)' } }}>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                                <Box sx={{
+                                    p: 1.5,
+                                    borderRadius: 3,
+                                    bgcolor: device.status === 'on' ? '#4FD1C5' : '#EDF2F7',
+                                    color: device.status === 'on' ? 'white' : '#A0AEC0'
+                                }}>
+                                    {getDeviceIcon(device.type)}
+                                </Box>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    {/* Schedule Button */}
+                                    <IconButton size="small" onClick={() => handleOpenSchedule(device)} sx={{ color: device.schedule ? '#4FD1C5' : '#A0AEC0' }}>
+                                        <AccessTime fontSize="small" />
+                                    </IconButton>
+                                    <Switch
+                                        checked={device.status === 'on'}
+                                        onChange={(e) => updateDevice(device.id, { status: e.target.checked ? 'on' : 'off' })}
+                                        color="secondary"
+                                    />
+                                </Box>
+                            </Box>
+
+                            <Typography variant="h6" fontWeight="bold" sx={{ mb: 0.5 }}>{device.name}</Typography>
+                            <Typography variant="body2" color="textSecondary" sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
+                                <span>{device.status === 'on' ? 'Active' : 'Inactive'}</span>
+                                {device.schedule && <span style={{ color: '#4FD1C5', fontSize: '0.8rem' }}>Runs at {device.schedule}</span>}
+                            </Typography>
+
+                            {/* Specific Controls based on device type */}
+                            {device.type === 'light' && (
+                                <Box>
+                                    <Typography variant="caption" color="textSecondary">Brightness</Typography>
+                                    <Slider
+                                        size="small"
+                                        defaultValue={device.brightness || 50}
+                                        sx={{ color: '#4FD1C5' }}
+                                        onChangeCommitted={(_, val) => updateDevice(device.id, { brightness: val })}
+                                    />
+                                </Box>
+                            )}
+                            {device.type === 'speaker' && (
+                                <Box>
+                                    <Typography variant="caption" color="textSecondary">Volume</Typography>
+                                    <Slider
+                                        size="small"
+                                        defaultValue={device.volume || 50}
+                                        sx={{ color: '#4FD1C5' }}
+                                        onChangeCommitted={(_, val) => updateDevice(device.id, { volume: val })}
+                                    />
+                                </Box>
+                            )}
+                        </Paper>
+                    </Grid>
+                ))}
+            </Grid>
+
+            {/* Schedule Dialog */}
+            <Dialog open={openSchedule} onClose={() => setOpenSchedule(false)} fullWidth maxWidth="xs">
+                <DialogTitle>Set Schedule</DialogTitle>
+                <DialogContent>
+                    <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
+                        Set a daily time for <b>{schedulingDevice?.name}</b> to turn on.
+                    </Typography>
+                    <TextField
+                        type="time"
+                        fullWidth
+                        variant="outlined"
+                        value={scheduleTime}
+                        onChange={(e) => setScheduleTime(e.target.value)}
+                        InputLabelProps={{ shrink: true }}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenSchedule(false)}>Cancel</Button>
+                    <Button onClick={handleSaveSchedule} variant="contained" sx={{ bgcolor: '#4FD1C5' }}>Save</Button>
+                </DialogActions>
+            </Dialog>
+        </Box>
+    );
+};
+
+export default RoomDetail;
+
+===
+
+src/pages/Rooms.jsx
+===
+import React, { useState } from 'react';
+import { Box, Typography, Grid, Paper, ToggleButton, ToggleButtonGroup, Button } from '@mui/material';
+import { ViewList, Map, Thermostat, Opacity, Devices, CloudUpload } from '@mui/icons-material';
+import { useHome } from '../contexts/HomeContext';
+import { useNavigate } from 'react-router-dom';
+
+const Rooms = () => {
+    const { rooms } = useHome();
+    const [view, setView] = useState('list');
+    const navigate = useNavigate();
+
+    const handleViewChange = (event, nextView) => {
+        if (nextView !== null) {
+            setView(nextView);
+        }
+    };
+
+    return (
+        <Box>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+                <Typography variant="h5" fontWeight="bold" sx={{ color: '#2D3748' }}>
+                    Rooms
+                </Typography>
+                <ToggleButtonGroup
+                    value={view}
+                    exclusive
+                    onChange={handleViewChange}
+                    sx={{ bgcolor: 'white', borderRadius: 3, boxShadow: '0 2px 5px rgba(0,0,0,0.05)' }}
+                >
+                    <ToggleButton value="list" sx={{ px: 3, border: 'none', '&.Mui-selected': { bgcolor: '#E6FFFA', color: '#319795' } }}>
+                        <ViewList sx={{ mr: 1 }} /> List
+                    </ToggleButton>
+                    <ToggleButton value="map" sx={{ px: 3, border: 'none', '&.Mui-selected': { bgcolor: '#E6FFFA', color: '#319795' } }}>
+                        <Map sx={{ mr: 1 }} /> Map
+                    </ToggleButton>
+                </ToggleButtonGroup>
+            </Box>
+
+            {view === 'list' ? (
+                <Grid container spacing={3}>
+                    {rooms.map((room) => (
+                        <Grid item xs={12} sm={6} md={4} key={room.id}>
+                            <Paper
+                                onClick={() => navigate(`/rooms/${room.id}`)}
+                                sx={{
+                                    borderRadius: 4,
+                                    overflow: 'hidden',
+                                    cursor: 'pointer',
+                                    transition: 'transform 0.3s ease',
+                                    '&:hover': { transform: 'translateY(-5px)', boxShadow: '0 10px 20px rgba(0,0,0,0.1)' }
+                                }}
+                            >
+                                <Box sx={{ height: 160, backgroundImage: `url(${room.image})`, backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative' }}>
+                                    <Box sx={{ position: 'absolute', inset: 0, bgcolor: 'rgba(0,0,0,0.3)' }} />
+                                    <Typography variant="h6" fontWeight="bold" sx={{ position: 'absolute', bottom: 16, left: 16, color: 'white' }}>
+                                        {room.name}
+                                    </Typography>
+                                </Box>
+                                <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between' }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: '#718096' }}>
+                                        <Devices fontSize="small" />
+                                        <Typography variant="body2">{room.devices} Devices</Typography>
+                                    </Box>
+                                    <Box sx={{ display: 'flex', gap: 2 }}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: '#E53E3E' }}>
+                                            <Thermostat fontSize="small" />
+                                            <Typography variant="body2">{room.temp}°C</Typography>
+                                        </Box>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: '#3182CE' }}>
+                                            <Opacity fontSize="small" />
+                                            <Typography variant="body2">{room.humidity}%</Typography>
+                                        </Box>
+                                    </Box>
+                                </Box>
+                            </Paper>
+                        </Grid>
+                    ))}
+                </Grid>
+            ) : (
+                <Paper
+                    sx={{
+                        p: 4,
+                        borderRadius: 4,
+                        minHeight: 500,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        bgcolor: '#F7FAFC',
+                        border: '2px dashed #CBD5E0'
+                    }}
+                >
+                    <Map sx={{ fontSize: 80, color: '#CBD5E0', mb: 2 }} />
+                    <Typography variant="h6" color="textSecondary" gutterBottom>
+                        No Floor Plan Uploaded
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>
+                        Upload a blueprint of your home to see device locations.
+                    </Typography>
+                    <Button
+                        variant="outlined"
+                        startIcon={<CloudUpload />}
+                        sx={{ borderRadius: 2, textTransform: 'none' }}
+                    >
+                        Upload Blueprint
+                    </Button>
+                </Paper>
+            )}
+        </Box>
+    );
+};
+
+export default Rooms;
+
+===
+
+src/pages/Spaces.jsx
+===
+import React, { useState } from 'react';
+import { Box, Typography, Button, Grid, Paper, Avatar, AvatarGroup, IconButton, Dialog, DialogTitle, DialogContent, TextField, DialogActions } from '@mui/material';
+import { Add as AddIcon, MoreVert as MoreVertIcon, LocationOn as LocationIcon } from '@mui/icons-material';
+import { useHome } from '../contexts/HomeContext';
+import EmptySpace from './EmptySpace';
+
+const Spaces = () => {
+    const { spaces, addSpace } = useHome();
+    const [open, setOpen] = useState(false);
+    const [newSpace, setNewSpace] = useState({ name: '', address: '' });
+
+    // Show empty state if no spaces
+    if (!spaces || spaces.length === 0) {
+        return <EmptySpace />;
+    }
+
+    const handleCreate = () => {
+        if (newSpace.name && newSpace.address) {
+            addSpace({
+                ...newSpace,
+                // Default mock values for new space
+                rooms: 0,
+                devices: 0,
+                members: 1
+            });
+            setOpen(false);
+            setNewSpace({ name: '', address: '' });
+        }
+    };
+
+    return (
+        <Box>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+                <Typography variant="h5" fontWeight="bold" sx={{ color: '#2D3748' }}>
+                    My Spaces
+                </Typography>
+                <Button
+                    variant="contained"
+                    startIcon={<AddIcon />}
+                    onClick={() => setOpen(true)}
+                    sx={{
+                        bgcolor: '#4FD1C5',
+                        boxShadow: '0 4px 14px 0 rgba(79, 209, 197, 0.4)',
+                        '&:hover': { bgcolor: '#38B2AC' },
+                        borderRadius: 3,
+                        textTransform: 'none',
+                        px: 3
+                    }}
+                >
+                    Add New Space
+                </Button>
+            </Box>
+
+            <Grid container spacing={4}>
+                {spaces.map((space) => (
+                    <Grid item xs={12} md={6} lg={4} key={space.id}>
+                        <Paper
+                            elevation={0}
+                            sx={{
+                                p: 3,
+                                borderRadius: 4,
+                                position: 'relative',
+                                overflow: 'hidden',
+                                transition: 'all 0.3s ease',
+                                cursor: 'pointer',
+                                '&:hover': {
+                                    transform: 'translateY(-4px)',
+                                    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+                                }
+                            }}
+                        >
+                            {/* Space Image Header */}
+                            <Box sx={{ height: 140, bgcolor: '#F7FAFC', mb: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                                <img
+                                    src={space.image}
+                                    alt={space.name}
+                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                />
+                                <IconButton
+                                    size="small"
+                                    sx={{ position: 'absolute', top: 12, right: 12, bgcolor: 'rgba(255,255,255,0.8)', '&:hover': { bgcolor: 'white' } }}
+                                >
+                                    <MoreVertIcon />
+                                </IconButton>
+                            </Box>
+
+                            <Typography variant="h6" fontWeight="bold" sx={{ color: '#2D3748', mb: 1 }}>
+                                {space.name}
+                            </Typography>
+                            <Typography variant="body2" sx={{ color: '#718096', mb: 3, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                {space.address}
+                            </Typography>
+
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 2 }}>
+                                <Box sx={{ display: 'flex', gap: 2 }}>
+                                    <Box>
+                                        <Typography variant="h6" fontWeight="bold" sx={{ color: '#2D3748', lineHeight: 1 }}>{space.rooms}</Typography>
+                                        <Typography variant="caption" sx={{ color: '#A0AEC0' }}>Rooms</Typography>
+                                    </Box>
+                                    <Box>
+                                        <Typography variant="h6" fontWeight="bold" sx={{ color: '#2D3748', lineHeight: 1 }}>{space.devices}</Typography>
+                                        <Typography variant="caption" sx={{ color: '#A0AEC0' }}>Devices</Typography>
+                                    </Box>
+                                </Box>
+
+                                <AvatarGroup max={4} sx={{ '& .MuiAvatar-root': { width: 30, height: 30, fontSize: '0.75rem' } }}>
+                                    <Avatar alt="Member 1" src="https://i.pravatar.cc/150?u=1" />
+                                    <Avatar alt="Member 2" src="https://i.pravatar.cc/150?u=2" />
+                                    <Avatar alt="Member 3" src="https://i.pravatar.cc/150?u=3" />
+                                </AvatarGroup>
+                            </Box>
+                        </Paper>
+                    </Grid>
+                ))}
+            </Grid>
+
+            {/* Add Space Dialog */}
+            <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="xs">
+                <DialogTitle fontWeight="bold">Add New Space</DialogTitle>
+                <DialogContent>
+                    <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
+                        Create a new space to manage your devices.
+                    </Typography>
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        label="Space Name"
+                        fullWidth
+                        variant="outlined"
+                        value={newSpace.name}
+                        onChange={(e) => setNewSpace({ ...newSpace, name: e.target.value })}
+                        sx={{ mb: 2 }}
+                    />
+                    <TextField
+                        margin="dense"
+                        label="Address"
+                        fullWidth
+                        variant="outlined"
+                        value={newSpace.address}
+                        onChange={(e) => setNewSpace({ ...newSpace, address: e.target.value })}
+                    />
+                </DialogContent>
+                <DialogActions sx={{ p: 2 }}>
+                    <Button onClick={() => setOpen(false)} sx={{ color: '#718096' }}>Cancel</Button>
+                    <Button
+                        onClick={handleCreate}
+                        variant="contained"
+                        disabled={!newSpace.name || !newSpace.address}
+                        sx={{ bgcolor: '#4FD1C5', '&:hover': { bgcolor: '#38B2AC' } }}
+                    >
+                        Create Space
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </Box>
+    );
+};
+
+export default Spaces;
+
+===
+
+src/pages/Statistics.jsx
+===
+import React from 'react';
+import { Box, Typography, Paper, Grid } from '@mui/material';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { useHome } from '../contexts/HomeContext';
+import { Bolt, TrendingDown } from '@mui/icons-material';
+
+const Statistics = () => {
+    const { statistics } = useHome();
+
+    // Custom Tooltip
+    const CustomTooltip = ({ active, payload, label }) => {
+        if (active && payload && payload.length) {
+            return (
+                <Box sx={{ bgcolor: 'white', p: 1.5, border: '1px solid #E2E8F0', borderRadius: 2, boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
+                    <Typography variant="caption" sx={{ color: '#718096', fontWeight: 600 }}>{label}</Typography>
+                    <Typography variant="body2" sx={{ color: '#4FD1C5', fontWeight: 'bold' }}>
+                        {payload[0].value} KW
+                    </Typography>
+                </Box>
+            );
+        }
+        return null;
+    };
+
+    return (
+        <Box>
+            <Typography variant="h5" fontWeight="bold" sx={{ color: '#2D3748', mb: 4 }}>
+                Energy Statistics
+            </Typography>
+
+            <Grid container spacing={4}>
+                {/* Chart Section */}
+                <Grid item xs={12} md={8}>
+                    <Paper sx={{ p: 3, borderRadius: 4, height: 400 }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 4 }}>
+                            <Typography variant="h6" fontWeight="bold" sx={{ color: '#2D3748' }}>
+                                Usage This Week
+                            </Typography>
+                            <Typography variant="body2" sx={{ color: '#A0AEC0' }}>
+                                KW / Day
+                            </Typography>
+                        </Box>
+
+                        <ResponsiveContainer width="100%" height="80%">
+                            <BarChart data={statistics.weeklyUsage} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
+                                <XAxis
+                                    dataKey="day"
+                                    axisLine={false}
+                                    tickLine={false}
+                                    tick={{ fill: '#A0AEC0', fontSize: 12 }}
+                                    dy={10}
+                                />
+                                <YAxis
+                                    axisLine={false}
+                                    tickLine={false}
+                                    tick={{ fill: '#A0AEC0', fontSize: 12 }}
+                                />
+                                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'transparent' }} />
+                                <Bar dataKey="kw" radius={[6, 6, 6, 6]} barSize={40}>
+                                    {statistics.weeklyUsage.map((entry, index) => (
+                                        <Cell key={`cell-${index}`} fill={index === 5 ? '#4FD1C5' : '#CBD5E0'} />
+                                    ))}
+                                </Bar>
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </Paper>
+                </Grid>
+
+                {/* Summary Cards */}
+                <Grid item xs={12} md={4}>
+                    <Paper
+                        sx={{
+                            p: 3,
+                            borderRadius: 4,
+                            bgcolor: '#319795',
+                            color: 'white',
+                            mb: 3,
+                            position: 'relative',
+                            overflow: 'hidden'
+                        }}
+                    >
+                        <Box sx={{ position: 'absolute', top: -10, right: -10, width: 80, height: 80, borderRadius: '50%', bgcolor: 'rgba(255,255,255,0.1)' }} />
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                            <Box>
+                                <Typography variant="h3" fontWeight="bold">{statistics.totalLoss}</Typography>
+                                <Typography variant="body2" sx={{ opacity: 0.8 }}>Total Loss (KW)</Typography>
+                            </Box>
+                            <Box sx={{ p: 1, bgcolor: 'rgba(255,255,255,0.2)', borderRadius: 2 }}>
+                                <Bolt />
+                            </Box>
+                        </Box>
+                    </Paper>
+
+                    <Paper sx={{ p: 3, borderRadius: 4 }}>
+                        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', mb: 2 }}>
+                            <Box sx={{ p: 1, bgcolor: '#FFF5F5', borderRadius: '50%', color: '#E53E3E' }}>
+                                <TrendingDown />
+                            </Box>
+                            <Box>
+                                <Typography variant="subtitle2" fontWeight="bold" sx={{ color: '#2D3748' }}>Down 12%</Typography>
+                                <Typography variant="caption" sx={{ color: '#A0AEC0' }}>compared to last week</Typography>
+                            </Box>
+                        </Box>
+                        <Typography variant="body2" sx={{ color: '#4A5568' }}>
+                            Great job! You are using less energy than usual. Consider checking your AC scheduling to save even more.
+                        </Typography>
+                    </Paper>
+                </Grid>
+            </Grid>
+        </Box>
+    );
+};
+
+export default Statistics;
+
+===
+
+src/pages/VerifyCode.jsx
+===
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Box, Typography, Button, TextField, Link, Grid } from '@mui/material';
+import otpIcon from '../assets/icon/Dangnhap/4_pixian_ai.png';
+
+const VerifyCode = () => {
+    const navigate = useNavigate();
+    const [code, setCode] = useState(['', '', '', '']);
+    const [timeLeft, setTimeLeft] = useState(30);
+
+    useEffect(() => {
+        if (timeLeft > 0) {
+            const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+            return () => clearTimeout(timer);
+        }
+    }, [timeLeft]);
+
+    const handleChange = (index, value) => {
+        if (value.length > 1) return;
+        const newCode = [...code];
+        newCode[index] = value;
+        setCode(newCode);
+
+        if (value !== '' && index < 3) {
+            const nextInput = document.getElementById(`otp-${index + 1}`);
+            if (nextInput) nextInput.focus();
+        }
+    };
+
+    const handleKeyDown = (index, e) => {
+        if (e.key === 'Backspace' && code[index] === '' && index > 0) {
+            const prevInput = document.getElementById(`otp-${index - 1}`);
+            if (prevInput) prevInput.focus();
+        }
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const fullCode = code.join('');
+        if (fullCode.length === 4) {
+            navigate('/reset-password');
+        }
+    };
+
+    return (
+        <Grid container sx={{ height: '100vh', width: '100vw', overflow: 'hidden' }}>
+
+            {/* --- CỘT TRÁI: HÌNH ẢNH (9 PHẦN) --- */}
+            <Grid item xs={12} md={9} sx={{
+                bgcolor: '#F3F4F6',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                p: 4,
+                position: 'relative'
+            }}>
+                <Box sx={{
+                    flex: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '100%',
+                    mt: 2
+                }}>
+                    <img
+                        src={otpIcon}
+                        alt="Security Check"
+                        style={{
+                            width: 'auto',
+                            maxWidth: '100%',
+                            maxHeight: '60vh',
+                            objectFit: 'contain',
+                            filter: 'drop-shadow(0px 10px 20px rgba(0,0,0,0.1))',
+                            transform: 'scale(1.35)',
+                        }}
+                    />
+                </Box>
+
+                <Box sx={{ textAlign: 'center', zIndex: 1, mb: 4, width: '100%' }}>
+                    <Typography variant="h3" sx={{
+                        fontWeight: 800,
+                        color: '#2D3748',
+                        mb: 1,
+                        lineHeight: 1.2,
+                        fontSize: { xs: '24px', lg: '36px' }
+                    }}>
+                        Easy living with your<br />
+                        smart home 💡
+                    </Typography>
+
+                    <Typography sx={{
+                        color: '#718096',
+                        maxWidth: '450px',
+                        mx: 'auto',
+                        fontSize: '15px',
+                        lineHeight: 1.5,
+                        mb: 3
+                    }}>
+                        Get your smart devices in one place and manage all of these with a few taps.
+                    </Typography>
+
+                    <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}>
+                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#CBD5E0' }} />
+                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#CBD5E0' }} />
+                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#CBD5E0' }} />
+                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#3182CE' }} />
+                    </Box>
+                </Box>
+            </Grid>
+
+            {/* --- CỘT PHẢI: FORM OTP (3 PHẦN) --- */}
+            <Grid item xs={12} md={3} sx={{
+                bgcolor: 'white',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100%',
+                px: { xs: 3, md: 3 }
+            }}>
+                <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%' }}>
+
+                    <Typography variant="h4" fontWeight="bold" sx={{ mb: 1, color: '#1A202C', textAlign: 'center' }}>
+                        Verify Code
+                    </Typography>
+
+                    {/* --- CẬP NHẬT VĂN BẢN MỚI TẠI ĐÂY --- */}
+                    <Typography variant="body2" sx={{
+                        mb: 4,
+                        color: '#718096',
+                        textAlign: 'center',
+                        fontSize: '14px',
+                        lineHeight: 1.6,
+                        maxWidth: '320px', // Giới hạn chiều rộng để chữ xuống dòng đẹp như ảnh mẫu
+                        mx: 'auto'
+                    }}>
+                        We just sent a 4-digit verification code to<br />
+                        <Box component="span" fontWeight="bold" color="#2D3748">phamxuanhau2607@gmail.com</Box>. Enter the code in the box below to continue.
+                    </Typography>
+
+                    {/* Ô NHẬP OTP */}
+                    <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1.5, mb: 4 }}>
+                        {code.map((digit, index) => (
+                            <TextField
+                                key={index}
+                                id={`otp-${index}`}
+                                value={digit}
+                                onChange={(e) => handleChange(index, e.target.value)}
+                                onKeyDown={(e) => handleKeyDown(index, e)}
+                                inputProps={{
+                                    maxLength: 1,
+                                    style: {
+                                        textAlign: 'center',
+                                        fontSize: '20px',
+                                        fontWeight: 'bold',
+                                        padding: 0
+                                    }
+                                }}
+                                sx={{
+                                    width: 50,
+                                    height: 50,
+                                    '& .MuiOutlinedInput-root': {
+                                        height: '100%',
+                                        borderRadius: '12px',
+                                        bgcolor: '#F7FAFC',
+                                        '& fieldset': { borderColor: '#E2E8F0' },
+                                        '&.Mui-focused fieldset': { borderColor: '#3182CE', borderWidth: 2 }
+                                    }
+                                }}
+                            />
+                        ))}
+                    </Box>
+
+                    <Typography variant="body2" sx={{ mb: 4, textAlign: 'center', color: '#718096', fontSize: '13px' }}>
+                        Don't receive code?{' '}
+                        <Link
+                            component="button"
+                            type="button"
+                            onClick={() => setTimeLeft(30)}
+                            disabled={timeLeft > 0}
+                            sx={{
+                                color: timeLeft > 0 ? '#A0AEC0' : '#3182CE',
+                                fontWeight: 600,
+                                textDecoration: 'none',
+                                cursor: timeLeft > 0 ? 'default' : 'pointer'
+                            }}
+                        >
+                            Re-send {timeLeft > 0 && `(${timeLeft}s)`}
+                        </Link>
+                    </Typography>
+
+                    <Button
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        sx={{
+                            py: 1.2,
+                            bgcolor: '#3182CE',
+                            borderRadius: '10px',
+                            textTransform: 'none',
+                            fontWeight: 600,
+                            fontSize: '15px',
+                            boxShadow: 'none',
+                            '&:hover': { bgcolor: '#2B6CB0', boxShadow: 'none' }
+                        }}
+                    >
+                        Verify
+                    </Button>
+                </Box>
+            </Grid>
+        </Grid>
+    );
+};
+
+export default VerifyCode;
+===
+
+src/theme/tokens.js
+===
+// Design Tokens for Smart Home App
+// Extracted from UI mockups in src/assets/UI/
+
+export const tokens = {
+    // Color Palette
+    colors: {
+        // Primary Colors
+        primary: {
+            main: '#007BFF',      // Primary Blue
+            light: '#4DA3FF',
+            dark: '#0056B3',
+            50: '#E6F3FF',
+            100: '#CCE7FF',
+            500: '#007BFF',
+            600: '#0056B3',
+            700: '#004085',
+        },
+
+        // Secondary Colors
+        secondary: {
+            main: '#6C63FF',      // Purple accent
+            light: '#8B84FF',
+            dark: '#4D45CC',
+        },
+
+        // Accent Colors
+        accent: {
+            orange: '#FF6B35',
+            green: '#00D084',
+            yellow: '#FFC107',
+            red: '#DC3545',
+            pink: '#FF6B9D',
+        },
+
+        // Neutral/Grayscale
+        neutral: {
+            white: '#FFFFFF',
+            50: '#F8F9FA',
+            100: '#F4F7FA',        // Background Grey
+            200: '#E9ECEF',
+            300: '#DEE2E6',
+            400: '#CED4DA',
+            500: '#ADB5BD',
+            600: '#6C757D',
+            700: '#495057',
+            800: '#333333',        // Text Dark
+            900: '#212529',
+            black: '#000000',
+        },
+
+        // Status Colors
+        status: {
+            success: '#28A745',
+            warning: '#FFC107',
+            error: '#DC3545',
+            info: '#17A2B8',
+        },
+
+        // Background
+        background: {
+            primary: '#FFFFFF',
+            secondary: '#F4F7FA',
+            tertiary: '#F8F9FA',
+        },
+
+        // Text
+        text: {
+            primary: '#333333',
+            secondary: '#6C757D',
+            tertiary: '#ADB5BD',
+            inverse: '#FFFFFF',
+        },
+    },
+
+    // Typography
+    typography: {
+        fontFamily: {
+            primary: "'Inter', system-ui, -apple-system, sans-serif",
+            secondary: "'Inter', sans-serif",
+        },
+        fontSize: {
+            xs: '0.75rem',      // 12px
+            sm: '0.875rem',     // 14px
+            base: '1rem',       // 16px
+            lg: '1.125rem',     // 18px
+            xl: '1.25rem',      // 20px
+            '2xl': '1.5rem',    // 24px
+            '3xl': '1.875rem',  // 30px
+            '4xl': '2.25rem',   // 36px
+            '5xl': '3rem',      // 48px
+            '6xl': '3.75rem',   // 60px
+        },
+        fontWeight: {
+            light: 300,
+            regular: 400,
+            medium: 500,
+            semibold: 600,
+            bold: 700,
+        },
+        lineHeight: {
+            tight: 1.2,
+            normal: 1.5,
+            relaxed: 1.75,
+        },
+    },
+
+    // Spacing (based on 4px grid)
+    spacing: {
+        0: '0',
+        1: '0.25rem',    // 4px
+        2: '0.5rem',     // 8px
+        3: '0.75rem',    // 12px
+        4: '1rem',       // 16px
+        5: '1.25rem',    // 20px
+        6: '1.5rem',     // 24px
+        8: '2rem',       // 32px
+        10: '2.5rem',    // 40px
+        12: '3rem',      // 48px
+        16: '4rem',      // 64px
+        20: '5rem',      // 80px
+        24: '6rem',      // 96px
+        32: '8rem',      // 128px
+    },
+
+    // Border Radius
+    borderRadius: {
+        none: '0',
+        sm: '0.25rem',   // 4px
+        base: '0.5rem',  // 8px
+        md: '0.75rem',   // 12px
+        lg: '1rem',      // 16px
+        xl: '1.5rem',    // 24px
+        '2xl': '2rem',   // 32px
+        full: '9999px',
+    },
+
+    // Shadows
+    shadows: {
+        xs: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+        sm: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+        base: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+        md: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+        lg: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+        xl: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+        inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
+    },
+
+    // Transitions
+    transitions: {
+        fast: '150ms cubic-bezier(0.4, 0, 0.2, 1)',
+        base: '200ms cubic-bezier(0.4, 0, 0.2, 1)',
+        slow: '300ms cubic-bezier(0.4, 0, 0.2, 1)',
+        slower: '500ms cubic-bezier(0.4, 0, 0.2, 1)',
+    },
+
+    // Z-Index  
+    zIndex: {
+        base: 0,
+        dropdown: 100,
+        sticky: 200,
+        fixed: 300,
+        modal: 400,
+        popover: 500,
+        tooltip: 600,
+    },
+
+    // Breakpoints (Desktop-first for laptop)
+    breakpoints: {
+        sm: '640px',
+        md: '768px',
+        lg: '1024px',
+        xl: '1280px',
+        '2xl': '1536px',
+    },
+
+    // Component-specific tokens
+    components: {
+        sidebar: {
+            width: '280px',
+            collapsedWidth: '80px',
+        },
+        navbar: {
+            height: '64px',
+        },
+        card: {
+            padding: '1.5rem',
+            borderRadius: '1rem',
+        },
+        input: {
+            height: {
+                sm: '36px',
+                base: '44px',
+                lg: '52px',
+            },
+            borderRadius: '0.5rem',
+        },
+        button: {
+            height: {
+                sm: '36px',
+                base: '44px',
+                lg: '52px',
+            },
+            borderRadius: '0.5rem',
+        },
+    },
+};
+
+export default tokens;
+
+===
+
+tailwind.config.js
+===
+import tokens from './src/theme/tokens.js';
+
+/** @type {import('tailwindcss').Config} */
+export default {
+    content: [
+        "./index.html",
+        "./src/**/*.{js,ts,jsx,tsx}",
+    ],
+    theme: {
+        extend: {
+            colors: {
+                primary: tokens.colors.primary,
+                secondary: tokens.colors.secondary,
+                accent: tokens.colors.accent,
+                neutral: tokens.colors.neutral,
+                status: tokens.colors.status,
+                background: tokens.colors.background,
+                text: tokens.colors.text,
+            },
+            fontFamily: {
+                sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            },
+            fontSize: tokens.typography.fontSize,
+            fontWeight: tokens.typography.fontWeight,
+            lineHeight: tokens.typography.lineHeight,
+            spacing: tokens.spacing,
+            borderRadius: tokens.borderRadius,
+            boxShadow: tokens.shadows,
+            transitionDuration: {
+                fast: '150ms',
+                base: '200ms',
+                slow: '300ms',
+                slower: '500ms',
+            },
+            zIndex: tokens.zIndex,
+            width: {
+                sidebar: tokens.components.sidebar.width,
+            },
+            height: {
+                navbar: tokens.components.navbar.height,
+            },
+        },
+    },
+    plugins: [],
+}
+
+
+===
+
+vite.config.js
+===
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [react()],
+})
+
+===
+
