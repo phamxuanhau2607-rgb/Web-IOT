@@ -20,9 +20,8 @@ import RoomDetail from "./pages/RoomDetail";
 import DeviceDetail from "./pages/DeviceDetail";
 
 // --- New Create Space Flow (Import các file vừa tạo) ---
-import CreateSpaceStep1 from "./pages/CreateSpaceStep1";
-import CreateSpaceStep4 from "./pages/CreateSpaceStep4"; // Bước chọn thiết bị
-import CreateSpaceStep7 from "./pages/CreateSpaceStep7"; // Bước tổng kết
+import EmptySpace from "./pages/EmptySpace";
+
 
 // --- Components ---
 import MainLayout from "./components/MainLayout";
