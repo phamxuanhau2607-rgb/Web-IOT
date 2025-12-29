@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, Typography, Button, Grid, Paper, Avatar, AvatarGroup, IconButton, Dialog, DialogTitle, DialogContent, TextField, DialogActions } from '@mui/material';
 import { Add as AddIcon, MoreVert as MoreVertIcon, LocationOn as LocationIcon } from '@mui/icons-material';
 import { useHome } from '../contexts/HomeContext';
-import EmptySpace from './EmptySpace';
+import CreateSpaceStep1 from './CreateSpaceStep1';
 
 const Spaces = () => {
     const { spaces, addSpace } = useHome();
@@ -11,7 +11,7 @@ const Spaces = () => {
 
     // Show empty state if no spaces
     if (!spaces || spaces.length === 0) {
-        return <EmptySpace />;
+        return <CreateSpaceStep1 />;
     }
 
     const handleCreate = () => {

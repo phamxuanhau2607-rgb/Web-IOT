@@ -104,7 +104,7 @@ const Landing = () => {
                             maxWidth: '1300px',  // Giới hạn tối đa cực lớn
 
                             // --- CĂN CHỈNH VỊ TRÍ ĐỂ KHỚP VẠCH ---
-                            marginLeft: '-20%',  // Kéo sang trái (số âm càng lớn càng sang trái)
+                            marginLeft: '-5%',  // Kéo sang trái (số âm càng lớn càng sang trái)
                             marginTop: '2%',     // Đẩy xuống dưới (số dương càng lớn càng xuống)
 
                             height: 'auto',

@@ -1,17 +1,17 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { MockProvider } from "./contexts/MockContext";
+
+// --- Pages ---
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import VerifyCode from "./pages/VerifyCode";
 import Hello from "./pages/Hello";
-import EmptySpace from "./pages/EmptySpace";
-import LinkDevices from "./pages/LinkDevices";
-import MainLayout from "./components/MainLayout";
 import Dashboard from "./pages/Dashboard";
-import { MockProvider } from "./contexts/MockContext";
 
+// --- Sidebar Pages ---
 import Spaces from "./pages/Spaces";
 import Statistics from "./pages/Statistics";
 import Profile from "./pages/Profile";
@@ -19,11 +19,20 @@ import Rooms from "./pages/Rooms";
 import RoomDetail from "./pages/RoomDetail";
 import DeviceDetail from "./pages/DeviceDetail";
 
+// --- New Create Space Flow (Import các file vừa tạo) ---
+import CreateSpaceStep1 from "./pages/CreateSpaceStep1";
+import CreateSpaceStep4 from "./pages/CreateSpaceStep4"; // Bước chọn thiết bị
+import CreateSpaceStep7 from "./pages/CreateSpaceStep7"; // Bước tổng kết
+
+// --- Components ---
+import MainLayout from "./components/MainLayout";
+
 function App() {
   return (
     <MockProvider>
       <Router>
         <Routes>
+          {/* Public Routes */}
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -31,7 +40,19 @@ function App() {
           <Route path="/verify-code" element={<VerifyCode />} />
           <Route path="/hello" element={<Hello />} />
 
-          {/* Main Application Layout */}
+          {/* Create Space Flow 
+             (Các trang này tự quản lý Layout bên trong nó nên để ngoài Wrapper)
+          */}
+          <Route path="/empty-space" element={<EmptySpace />} />
+
+          {/* Mapping đường dẫn khớp với code navigate() trong các file đã viết */}
+          <Route path="/link-devices" element={<CreateSpaceStep1 />} /> {/* Step 1: Nhập tên nhà */}
+          <Route path="/create-space/step-2" element={<CreateSpaceStep4 />} /> {/* Step 4: Chọn thiết bị */}
+          <Route path="/create-space/summary" element={<CreateSpaceStep7 />} /> {/* Step 7: Xác nhận */}
+
+          {/* Main Application Layout Wrapper 
+             (Dành cho các trang Dashboard thông thường)
+          */}
           <Route element={<MainLayout />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/spaces" element={<Spaces />} />
@@ -40,10 +61,8 @@ function App() {
             <Route path="/rooms" element={<Rooms />} />
             <Route path="/rooms/:id" element={<RoomDetail />} />
             <Route path="/rooms/:roomId/device/:id" element={<DeviceDetail />} />
-            <Route path="/empty-space" element={<EmptySpace />} />
-            <Route path="/link-devices" element={<LinkDevices />} />
-            {/* Placeholder routes for other sidebar items */}
           </Route>
+
         </Routes>
       </Router>
     </MockProvider>
