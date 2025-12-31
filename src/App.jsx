@@ -9,10 +9,10 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import VerifyCode from "./pages/VerifyCode";
 import Hello from "./pages/Hello";
-import Dashboard from "./pages/Dashboard";
+import Spaces from "./pages/Spaces";
 
 // --- Sidebar Pages ---
-import Spaces from "./pages/Spaces";
+import CreateSpace from "./pages/CreateSpace";
 import Statistics from "./pages/Statistics";
 import Profile from "./pages/Profile";
 import Rooms from "./pages/Rooms";
@@ -21,6 +21,8 @@ import DeviceDetail from "./pages/DeviceDetail";
 
 // --- New Create Space Flow (Import các file vừa tạo) ---
 import EmptySpace from "./pages/EmptySpace";
+import AddRooms from "./pages/AddRooms";
+import SpaceBuilder from "./pages/SpaceBuilder";
 
 
 // --- Components ---
@@ -42,18 +44,15 @@ function App() {
           {/* Create Space Flow 
              (Các trang này tự quản lý Layout bên trong nó nên để ngoài Wrapper)
           */}
-          <Route path="/empty-space" element={<EmptySpace />} />
-
-          {/* Mapping đường dẫn khớp với code navigate() trong các file đã viết */}
-          <Route path="/link-devices" element={<CreateSpaceStep1 />} /> {/* Step 1: Nhập tên nhà */}
-          <Route path="/create-space/step-2" element={<CreateSpaceStep4 />} /> {/* Step 4: Chọn thiết bị */}
-          <Route path="/create-space/summary" element={<CreateSpaceStep7 />} /> {/* Step 7: Xác nhận */}
-
           {/* Main Application Layout Wrapper 
              (Dành cho các trang Dashboard thông thường)
           */}
           <Route element={<MainLayout />}>
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/empty-space" element={<EmptySpace />} />
+            {/* Was /dashboard -> Now /create-space for the Wizard flow */}
+            <Route path="/create-space" element={<CreateSpace />} />
+            <Route path="/space-builder" element={<SpaceBuilder />} />
+            <Route path="/add-rooms" element={<AddRooms />} />
             <Route path="/spaces" element={<Spaces />} />
             <Route path="/statistics" element={<Statistics />} />
             <Route path="/profile" element={<Profile />} />

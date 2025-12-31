@@ -22,7 +22,7 @@ const MainLayout = () => {
     // Active State Logic
     const getActive = (path) => {
         // Spaces (Dashboard)
-        if (path === '/dashboard' && location.pathname === '/dashboard') return true;
+        if ((path === '/dashboard' || path === '/empty-space') && (location.pathname === '/dashboard' || location.pathname === '/empty-space')) return true;
         // Rooms
         if (path === '/rooms' && location.pathname.startsWith('/rooms') && !location.pathname.includes('/device/')) return true;
         // Devices Highlight Rule: Highlight if URL contains 'device' (Detail View)
@@ -57,7 +57,7 @@ const MainLayout = () => {
                         icon={BoxIcon}
                         label="Spaces"
                         active={getActive('/dashboard')}
-                        onClick={() => navigate('/dashboard')}
+                        onClick={() => navigate('/empty-space')}
                     />
                     <SidebarItem
                         icon={Home}
@@ -104,7 +104,10 @@ const MainLayout = () => {
             </aside>
 
             {/* Main Content */}
-            <main className="main-content">
+            <main className="main-content" style={{
+                padding: ['/create-space', '/space-builder'].includes(location.pathname) ? 0 : undefined,
+                maxWidth: ['/create-space', '/space-builder'].includes(location.pathname) ? '100%' : undefined
+            }}>
                 <Outlet />
             </main>
         </div>
